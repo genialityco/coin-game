@@ -1,9 +1,8 @@
-// src/components/CoinGame.jsx
 import React, { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
 
 const TOTAL_COINS = 20;      // número total de monedas a generar
-const COIN_SCALE  = 0.1;    // tamaño de las monedas
+const COIN_SCALE  = 0.1;    // escala de las monedas
 
 // Define tus tipos de moneda y sus pesos relativos
 const COIN_TYPES = [
@@ -11,7 +10,7 @@ const COIN_TYPES = [
     key:    'coin1',
     asset:  '/assets/MONEDA_01.png',
     weight: 3,               // aparecerá 3 veces más que coin2
-    label:  'Moneda 1'       // para mostrar en el texto
+    label:  'Moneda 1'
   },
   {
     key:    'coin2',
@@ -38,14 +37,12 @@ export default function CoinGame() {
       }
 
       preload() {
-        // carga dinámica de cada moneda
         COIN_TYPES.forEach(ct => {
           this.load.image(ct.key, ct.asset);
         });
       }
 
       create() {
-        // Inicializa contadores y textos
         this.scoreTexts = {};
         COIN_TYPES.forEach((ct, idx) => {
           this.score[ct.key] = 0;
@@ -57,12 +54,11 @@ export default function CoinGame() {
           );
         });
 
-        // Grupo de monedas
-        this.coins = this.physics.add.staticGroup();
+        // Grupo de monedas sin física, solo para manejo 
+        this.coins = this.add.group();
 
-        // Para cada moneda…
+        // Crea monedas que caen en bucle
         for (let i = 0; i < TOTAL_COINS; i++) {
-          // elige tipo según peso
           const rnd = Phaser.Math.Between(1, totalWeight);
           let acc = 0;
           const chosen = COIN_TYPES.find(ct => {
@@ -70,36 +66,38 @@ export default function CoinGame() {
             return rnd <= acc;
           });
 
-          // dimensiones para margen
+          // Obtiene dimensiones de la textura
           const texture = this.textures.get(chosen.key).getSourceImage();
           const wTx = texture.width  * COIN_SCALE;
           const hTx = texture.height * COIN_SCALE;
 
-          // posición aleatoria dentro del cuadrado
+          // Posiciones de inicicio y fin
           const x = Phaser.Math.Between(wTx / 2, this.scale.width - wTx / 2);
-          const y = Phaser.Math.Between(
-            hTx / 2 + COIN_SCALE * 20,
-            this.scale.height - hTx / 2 - COIN_SCALE * 20
-          );
+          const startY = Phaser.Math.Between(-hTx, 0);
+          const endY = this.scale.height + hTx / 2;
 
-          const coin = this.coins.create(x, y, chosen.key).setScale(COIN_SCALE);
-          coin.setInteractive();
+          // Crea la moneda
+          const coin = this.add.image(x, startY, chosen.key)
+            .setScale(COIN_SCALE)
+            .setInteractive();
+          this.coins.add(coin);
 
-          // tween para flotar
+          // Caida continua
           this.tweens.add({
             targets: coin,
-            y:       y - 20,
-            duration: 800,
-            yoyo:    true,
-            repeat:  -1,
-            ease:    'Sine.easeInOut'
+            y: endY,
+            duration: Phaser.Math.Between(3000, 6000),
+            ease: 'Linear',
+            repeat: -1,
+            repeatDelay: Phaser.Math.Between(0, 1000)
           });
         }
 
-        // al hacer clic/tap en una moneda…
+        // Manejo de clic en moneda
         this.input.on('gameobjectdown', (_, coin) => {
           const type = coin.texture.key;
-          coin.disableBody(true, true);
+          coin.disableInteractive();
+          coin.setVisible(false);
           this.score[type]++;
           this.scoreTexts[type].setText(
             `${COIN_TYPES.find(ct => ct.key === type).label}: ${this.score[type]}`
@@ -108,12 +106,10 @@ export default function CoinGame() {
       }
     }
 
-    // Configuración Phaser
     const config = {
       type:        Phaser.AUTO,
       parent:      container,
       transparent: true,
-      physics:     { default: 'arcade' },
       scene:       CoinScene,
       scale: {
         width:  side,
@@ -124,7 +120,7 @@ export default function CoinGame() {
 
     const game = new Phaser.Game(config);
 
-    // Manejo de resize
+    // Ajuste al redimensionar
     const onResize = () => {
       side = container.clientWidth;
       game.scale.resize(side, side);
