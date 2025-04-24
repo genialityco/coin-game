@@ -1,16 +1,40 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Phaser from 'phaser';
-import '../index.css';
+import React, { useEffect, useRef, useState } from "react";
+import Phaser from "phaser";
+import "../index.css";
 
 const TOTAL_COINS = 30;
 const COIN_SCALE = 0.1;
 const GAME_TIME = 30;
 
 const COIN_TYPES = [
-  { key: 'coin1', asset: '/assets/MONEDA_01.png', weight: 3, label: 'Moneda 1', points: 10 },
-  { key: 'coin2', asset: '/assets/MONEDA_02.png', weight: 1, label: 'Moneda 2', points: 20 },
-  { key: 'betplay', asset: '/assets/LOGO-BETPLAY.png', weight: 1, label: 'Logo Betplay', points: 40 },
-  { key: 'dorado', asset: '/assets/TEXTO-DORADO.png', weight: 1, label: 'Texto Dorado', points: 50 },
+  {
+    key: "coin1",
+    asset: "/assets/MONEDA_01.png",
+    weight: 3,
+    label: "Moneda 1",
+    points: 10,
+  },
+  {
+    key: "coin2",
+    asset: "/assets/MONEDA_02.png",
+    weight: 1,
+    label: "Moneda 2",
+    points: 20,
+  },
+  {
+    key: "betplay",
+    asset: "/assets/LOGO-BETPLAY.png",
+    weight: 1,
+    label: "Logo Betplay",
+    points: 40,
+  },
+  {
+    key: "dorado",
+    asset: "/assets/TEXTO-DORADO.png",
+    weight: 1,
+    label: "Texto Dorado",
+    points: 50,
+  },
 ];
 
 export default function CoinGame() {
@@ -25,12 +49,13 @@ export default function CoinGame() {
 
     class CoinScene extends Phaser.Scene {
       constructor() {
-        super({ key: 'CoinScene' });
+        super({ key: "CoinScene" });
       }
 
       preload() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
-        this.load.image('legales', '/assets/LEGALES.png'); // Footer cargado aquí
+        this.load.image("legales", "/assets/LEGALES.png");
+        this.load.image("header", "/assets/FRASE_SUPERIOR.png");
       }
 
       create() {
@@ -39,9 +64,16 @@ export default function CoinGame() {
         this.scores = {};
         this.timerEvent = null;
 
+        // Header FRASE_SUPERIOR (depth 4)
+        this.headerImg = this.add
+          .image(this.scale.width / 2, 0, "header")
+          .setOrigin(0.5, 0)
+          .setScale(0.3) // Ajusta escala según tu necesidad
+          .setDepth(4);
+
         // Footer LEGALES (depth 4)
         this.footerImg = this.add
-          .image(this.scale.width / 2, this.scale.height, 'legales')
+          .image(this.scale.width / 2, this.scale.height, "legales")
           .setOrigin(0.5, 1)
           .setScale(0.3) // Ajusta escala según tu necesidad
           .setDepth(4);
@@ -49,8 +81,8 @@ export default function CoinGame() {
         // Temporizador (depth 3)
         this.timerText = this.add
           .text(this.scale.width - 10, 10, `00:${GAME_TIME}`, {
-            font: '24px Arial',
-            fill: '#ff0',
+            font: "24px Arial",
+            fill: "#ff0",
           })
           .setOrigin(1, 0)
           .setDepth(3);
@@ -58,7 +90,7 @@ export default function CoinGame() {
         // Panel de puntuaciones (depth 1)
         const panelWidth = 180;
         const panelX = this.scale.width - panelWidth - 10;
-        const panelY = 50;
+        const panelY = 80;
         const panelHeight = COIN_TYPES.length * 40 + 20;
 
         this.add
@@ -72,10 +104,18 @@ export default function CoinGame() {
           this.counts[ct.key] = 0;
           this.scores[ct.key] = 0;
           const yRow = panelY + 10 + idx * 40;
-          this.add.image(panelX + 35, yRow + 15, ct.key).setScale(0.05).setDepth(2);
-          this.add.text(panelX + 70, yRow, 'x', { font: '20px Arial', fill: '#fff' }).setDepth(2);
+          this.add
+            .image(panelX + 35, yRow + 15, ct.key)
+            .setScale(0.05)
+            .setDepth(2);
+          this.add
+            .text(panelX + 70, yRow, "x", { font: "20px Arial", fill: "#fff" })
+            .setDepth(2);
           this.texts[ct.key] = this.add
-            .text(panelX + 90, yRow, '0  |  0', { font: '20px Arial', fill: '#fff' })
+            .text(panelX + 90, yRow, "0  |  0", {
+              font: "20px Arial",
+              fill: "#fff",
+            })
             .setDepth(2);
         });
 
@@ -85,7 +125,7 @@ export default function CoinGame() {
         for (let i = 0; i < TOTAL_COINS; i++) this.spawnCoin(totalWeight);
 
         // Clic en moneda
-        this.input.on('gameobjectdown', (_, coin) => this.collectCoin(coin));
+        this.input.on("gameobjectdown", (_, coin) => this.collectCoin(coin));
 
         // Temporizador (guardado en variable)
         this.timerEvent = this.time.addEvent({
@@ -93,7 +133,9 @@ export default function CoinGame() {
           repeat: GAME_TIME - 1,
           callback: () => {
             this.timeLeft--;
-            this.timerText.setText(`00:${this.timeLeft.toString().padStart(2, '0')}`);
+            this.timerText.setText(
+              `00:${this.timeLeft.toString().padStart(2, "0")}`
+            );
             if (this.timeLeft === 0) this.endGame();
           },
         });
@@ -122,6 +164,8 @@ export default function CoinGame() {
           .setScale(COIN_SCALE)
           .setInteractive({ useHandCursor: true })
           .setDepth(0);
+        const customScale = chosen.key === "betplay" ? 0.18 : COIN_SCALE;
+        coin.setScale(customScale);
         coin.points = chosen.points;
         coin.type = chosen.key;
         this.coins.add(coin);
@@ -130,7 +174,7 @@ export default function CoinGame() {
           targets: coin,
           y: endY,
           duration: Phaser.Math.Between(3000, 6000),
-          ease: 'Linear',
+          ease: "Linear",
           repeat: -1,
           repeatDelay: Phaser.Math.Between(0, 1000),
         });
@@ -140,7 +184,9 @@ export default function CoinGame() {
         if (this.timeLeft <= 0 || !coin.active) return;
         this.counts[coin.type]++;
         this.scores[coin.type] += coin.points;
-        this.texts[coin.type].setText(`${this.counts[coin.type]}  |  ${this.scores[coin.type]}`);
+        this.texts[coin.type].setText(
+          `${this.counts[coin.type]}  |  ${this.scores[coin.type]}`
+        );
         coin.destroy();
         const totalWeight = COIN_TYPES.reduce((s, ct) => s + ct.weight, 0);
         this.spawnCoin(totalWeight);
@@ -150,29 +196,41 @@ export default function CoinGame() {
         const total = Object.values(this.scores).reduce((s, v) => s + v, 0);
         this.shutdown();
 
-        this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.7)
+        this.add
+          .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.7)
           .setOrigin(0, 0)
           .setDepth(5);
 
         const cx = this.scale.width / 2;
         let cy = this.scale.height / 2 - 40;
 
-        this.add.text(cx, cy, '¡Tiempo terminado!', { font: '28px Arial', fill: '#fff' })
-          .setOrigin(0.5).setDepth(6);
+        this.add
+          .text(cx, cy, "¡Tiempo terminado!", {
+            font: "28px Arial",
+            fill: "#fff",
+          })
+          .setOrigin(0.5)
+          .setDepth(6);
         cy += 40;
-        this.add.text(cx, cy, `Puntos: ${total}`, { font: '24px Arial', fill: '#ff0' })
-          .setOrigin(0.5).setDepth(6);
+        this.add
+          .text(cx, cy, `Puntos: ${total}`, {
+            font: "24px Arial",
+            fill: "#ff0",
+          })
+          .setOrigin(0.5)
+          .setDepth(6);
         cy += 50;
 
-        this.add.text(cx, cy, 'REINICIAR', {
-          font: '26px Arial',
-          fill: '#fff',
-          backgroundColor: '#000',
-          padding: { x: 20, y: 10 },
-        })
+        this.add
+          .text(cx, cy, "REINICIAR", {
+            font: "26px Arial",
+            fill: "#fff",
+            backgroundColor: "#000",
+            padding: { x: 20, y: 10 },
+          })
           .setOrigin(0.5)
           .setInteractive({ useHandCursor: true })
-          .on('pointerdown', () => this.scene.restart())
+          .on("pointerdown", () => this.scene.restart())
           .setDepth(6);
       }
 
@@ -196,10 +254,10 @@ export default function CoinGame() {
       side = container.clientWidth;
       game.scale.resize(side, side);
     };
-    window.addEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
 
     return () => {
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener("resize", onResize);
       game.destroy(true);
     };
   }, [started]);
