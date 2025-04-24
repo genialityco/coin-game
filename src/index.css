@@ -92,3 +92,24 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.coin-overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+}
+.start-button{
+  font-size:1.5rem;
+  padding:.75rem 1.5rem;
+  background:#000;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:opacity .25s;
+}
+.start-button:hover{opacity:.8}
