@@ -110,6 +110,14 @@ button:focus-visible {
   100% { transform: translate(-50%, 0); }
 }
 
+.premios {
+  position: absolute;
+  top: 0px;
+  align: center;
+  width: 500px;
+  height: auto;
+}
+
 .logo {
   position: absolute;
   bottom: 100px;

@@ -294,6 +294,7 @@ export default function CoinGame() {
       {!started && (
         <div className="coin-overlay">
           <img src="/assets/MONEDAS.png" alt="Monedas" className="logo" />
+          <img src="/assets/PREMIOS.png" alt="Monedas" className="premios" />
           <button className="start-button" onClick={() => setStarted(true)}>
             EMPEZAR
           </button>
