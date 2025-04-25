@@ -93,23 +93,47 @@ button:focus-visible {
   }
 }
 
-.coin-overlay{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:10;
+.coin-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* quitamos flex-direction/​gap porque sólo centramos el botón */
+  z-index: 10;
 }
-.start-button{
-  font-size:1.5rem;
-  padding:.75rem 1.5rem;
-  background:#000;
-  color:#fff;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  transition:opacity .25s;
+
+@keyframes floatY {
+  0%   { transform: translate(-50%, 0); }
+  50%  { transform: translate(-50%, -20px); }
+  100% { transform: translate(-50%, 0); }
 }
-.start-button:hover{opacity:.8}
+
+.logo {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  width: 230px;
+  height: auto;
+  /* centrado horizontal + animación */
+  transform: translateX(-50%);
+  animation: floatY 2.5s ease-in-out infinite;
+}
+
+/* tu botón sigue igual */
+.start-button {
+  font-size: 1.5rem;
+  font-weight: 800;
+  padding: .75rem 1.5rem;
+  background: #e1aa4a;
+  box-shadow: 0 0 5px #e1aa4a, 0 0 25px #e1aa4a, 0 0 50px #e1aa4a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity .25s;
+}
+.start-button:hover {
+  opacity: .8;
+}

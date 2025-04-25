@@ -4,7 +4,7 @@ import "../index.css";
 
 const TOTAL_COINS = 30;
 const COIN_SCALE = 0.1;
-const GAME_TIME = 30;
+const GAME_TIME = 5;
 
 const COIN_TYPES = [
   {
@@ -68,8 +68,9 @@ export default function CoinGame() {
         this.headerImg = this.add
           .image(this.scale.width / 2, 0, "header")
           .setOrigin(0.5, 0)
-          .setScale(0.3) // Ajusta escala según tu necesidad
-          .setDepth(4);
+          .setScale(0.25)
+          .setDepth(4)
+          .setY(50);
 
         // Footer LEGALES (depth 4)
         this.footerImg = this.add
@@ -81,42 +82,61 @@ export default function CoinGame() {
         // Temporizador (depth 3)
         this.timerText = this.add
           .text(this.scale.width - 10, 10, `00:${GAME_TIME}`, {
-            font: "24px Arial",
-            fill: "#ff0",
+            fontFamily: "Arial",
+            fontSize: "28px",
+            fontStyle: "normal",
+            fontWeight: "bold",
+            color: "#ffffff",
           })
-          .setOrigin(1, 0)
+          .setOrigin(1, -1)
           .setDepth(3);
 
         // Panel de puntuaciones (depth 1)
-        const panelWidth = 180;
+        const panelWidth = 190;
         const panelX = this.scale.width - panelWidth - 10;
         const panelY = 80;
         const panelHeight = COIN_TYPES.length * 40 + 20;
 
-        this.add
-          .rectangle(panelX, panelY, panelWidth, panelHeight, 0x000000, 0.6)
-          .setOrigin(0, 0)
-          .setDepth(1);
+        // 2) Fondo y borde con Graphics
+        const gfx = this.add.graphics().setDepth(1);
+        gfx.fillStyle(0x000000, 0.6);
+        gfx.fillRect(panelX, panelY, panelWidth, panelHeight);
 
-        // Contenido del panel (depth 2)
+        // 3) Calcula el centro interno del panel
+        const contentCenterX = panelX + panelWidth / 2;
+
+        // 4) Contenido centrado y texto en negrita
         this.texts = {};
         COIN_TYPES.forEach((ct, idx) => {
           this.counts[ct.key] = 0;
           this.scores[ct.key] = 0;
+
           const yRow = panelY + 10 + idx * 40;
+
+          // Icono centrado a la izquierda del centro
           this.add
-            .image(panelX + 35, yRow + 15, ct.key)
-            .setScale(0.05)
-            .setDepth(2);
+            .image(contentCenterX - 40, yRow + 15, ct.key)
+            .setScale(0.055)
+            .setDepth(2)
+            .setOrigin(0.5);
+
+          // “x” justo en el centro
           this.add
-            .text(panelX + 70, yRow, "x", { font: "20px Arial", fill: "#fff" })
-            .setDepth(2);
-          this.texts[ct.key] = this.add
-            .text(panelX + 90, yRow, "0  |  0", {
-              font: "20px Arial",
+            .text(contentCenterX, yRow, "x", {
+              font: "bold 20px Arial",
               fill: "#fff",
             })
-            .setDepth(2);
+            .setDepth(2)
+            .setOrigin(0.3, 0);
+
+          // Contador a la derecha del centro
+          this.texts[ct.key] = this.add
+            .text(contentCenterX + 20, yRow, "0  |  0", {
+              font: "bold 20px Arial",
+              fill: "#fff",
+            })
+            .setDepth(2)
+            .setOrigin(0.1, 0);
         });
 
         // Generar monedas
@@ -164,7 +184,14 @@ export default function CoinGame() {
           .setScale(COIN_SCALE)
           .setInteractive({ useHandCursor: true })
           .setDepth(0);
-        const customScale = chosen.key === "betplay" ? 0.18 : COIN_SCALE;
+        let customScale;
+        if (chosen.key === "betplay") {
+          customScale = 0.18;
+        } else if (chosen.key === "dorado") {
+          customScale = 0.15; // ajusta este valor al tamaño que quieras para "dorado"
+        } else {
+          customScale = COIN_SCALE;
+        }
         coin.setScale(customScale);
         coin.points = chosen.points;
         coin.type = chosen.key;
@@ -215,7 +242,7 @@ export default function CoinGame() {
         this.add
           .text(cx, cy, `Puntos: ${total}`, {
             font: "24px Arial",
-            fill: "#ff0",
+            fill: "#e1aa4a",
           })
           .setOrigin(0.5)
           .setDepth(6);
@@ -225,7 +252,7 @@ export default function CoinGame() {
           .text(cx, cy, "REINICIAR", {
             font: "26px Arial",
             fill: "#fff",
-            backgroundColor: "#000",
+            backgroundColor: "#e1aa4a",
             padding: { x: 20, y: 10 },
           })
           .setOrigin(0.5)
@@ -266,6 +293,7 @@ export default function CoinGame() {
     <div ref={gameContainer} className="coin-container" key={started}>
       {!started && (
         <div className="coin-overlay">
+          <img src="/assets/MONEDAS.png" alt="Monedas" className="logo" />
           <button className="start-button" onClick={() => setStarted(true)}>
             EMPEZAR
           </button>
