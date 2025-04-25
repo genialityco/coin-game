@@ -200,7 +200,7 @@ export default function CoinGame() {
         this.tweens.add({
           targets: coin,
           y: endY,
-          duration: Phaser.Math.Between(3000, 6000),
+          duration: Phaser.Math.Between(5000, 8000),
           ease: "Linear",
           repeat: -1,
           repeatDelay: Phaser.Math.Between(0, 1000),
