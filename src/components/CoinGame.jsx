@@ -4,7 +4,7 @@ import "../index.css";
 
 const TOTAL_COINS = 30;
 const COIN_SCALE = 0.1;
-const GAME_TIME = 5;
+const GAME_TIME = 20;
 
 const COIN_TYPES = [
   {
