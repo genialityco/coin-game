@@ -32,8 +32,8 @@ html, body, #root {
 
 .coin-container {
   /* lado = min(altura de viewport, ancho de viewport) */
-  width: min(100vh, 100vw);
-  height: min(100vh, 100vw);
+  width: 100vw;
+  height: 100vh;
 
   /* centrar en la pantalla */
   margin: auto;
