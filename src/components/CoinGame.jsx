@@ -12,28 +12,28 @@ const COIN_TYPES = [
     asset: "/assets/MONEDA_01.png",
     weight: 3,
     label: "Moneda 1",
-    points: 30,
+    points: 20,
   },
   {
     key: "coin2",
     asset: "/assets/MONEDA_02.png",
     weight: 1,
     label: "Moneda 2",
-    points: 40,
+    points: 30,
   },
   {
     key: "betplay",
     asset: "/assets/LOGO-BETPLAY.png",
     weight: 1,
     label: "Logo Betplay",
-    points: 70,
+    points: 50,
   },
   {
     key: "dorado",
     asset: "/assets/TEXTO-DORADO.png",
     weight: 1,
     label: "Texto Dorado",
-    points: 80,
+    points: 60,
   },
 ];
 
