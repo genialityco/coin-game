@@ -98,9 +98,10 @@ button:focus-visible {
   inset: 0;
   background: rgba(0,0,0,0.6);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* quitamos flex-direction/​gap porque sólo centramos el botón */
+  gap: 1.5rem;
   z-index: 10;
 }
 
@@ -114,7 +115,7 @@ button:focus-visible {
   position: absolute;
   top: 0px;
   align: center;
-  width: 600px;
+  width: 400px;
   height: auto;
 }
 
@@ -135,7 +136,6 @@ button:focus-visible {
   font-weight: 800;
   padding: .75rem 1.5rem;
   background: #e1aa4a;
-  margin-top: 100px;
   box-shadow: 0 0 5px #e1aa4a, 0 0 25px #e1aa4a, 0 0 50px #e1aa4a;
   color: #fff;
   border: none;
@@ -145,4 +145,64 @@ button:focus-visible {
 }
 .start-button:hover {
   opacity: .8;
+}
+
+/* Botón semitransparente “Ver premios” */
+.premios-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.6rem 1.2rem;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.25s;
+}
+.premios-button:hover {
+  opacity: 0.8;
+}
+/* --- Modal de premios --- */
+.premios-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+/* Contenedor interno con padding para el close */
+.premios-modal-content {
+  position: relative;
+  background: #000;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* Botón de cierre */
+.premios-modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  line-height: 1;
+}
+.premios-modal-close:hover {
+  opacity: 0.7;
+}
+
+/* Imagen dentro del modal */
+.premios-modal-content img {
+  max-width: 90vw;
+  max-height: 90vh;
+  display: block;
 }

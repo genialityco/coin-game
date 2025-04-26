@@ -12,34 +12,35 @@ const COIN_TYPES = [
     asset: "/assets/MONEDA_01.png",
     weight: 3,
     label: "Moneda 1",
-    points: 10,
+    points: 20,
   },
   {
     key: "coin2",
     asset: "/assets/MONEDA_02.png",
     weight: 1,
     label: "Moneda 2",
-    points: 20,
+    points: 40,
   },
   {
     key: "betplay",
     asset: "/assets/LOGO-BETPLAY.png",
     weight: 1,
     label: "Logo Betplay",
-    points: 40,
+    points: 80,
   },
   {
     key: "dorado",
     asset: "/assets/TEXTO-DORADO.png",
     weight: 1,
     label: "Texto Dorado",
-    points: 50,
+    points: 100,
   },
 ];
 
 export default function CoinGame() {
   const gameContainer = useRef(null);
   const [started, setStarted] = useState(false);
+  const [showPremios, setShowPremios] = useState(false);
 
   useEffect(() => {
     if (!started) return;
@@ -291,13 +292,49 @@ export default function CoinGame() {
 
   return (
     <div ref={gameContainer} className="coin-container" key={started}>
+      {/* OVERLAY INICIAL */}
       {!started && (
         <div className="coin-overlay">
           <img src="/assets/MONEDAS.png" alt="Monedas" className="logo" />
-          <img src="/assets/PREMIOS.png" alt="Monedas" className="premios" />
-          <button className="start-button" onClick={() => setStarted(true)}>
+
+          <button
+            className="premios-button"
+            onClick={() => setShowPremios(true)}
+          >
+            Ver premios
+          </button>
+
+          <button
+            className="start-button"
+            onClick={() => setStarted(true)}
+          >
             EMPEZAR
           </button>
+        </div>
+      )}
+
+      {/* MODAL DE PREMIOS */}
+      {showPremios && (
+        <div
+          className="premios-modal"
+          onClick={() => setShowPremios(false)}
+        >
+          <div
+            className="premios-modal-content"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Botón de cerrar */}
+            <button
+              className="premios-modal-close"
+              onClick={() => setShowPremios(false)}
+            >
+              &times;
+            </button>
+            <img
+              src="/assets/PREMIOS.png"
+              alt="Premios"
+            />
+          </div>
         </div>
       )}
     </div>
