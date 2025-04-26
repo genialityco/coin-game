@@ -12,7 +12,7 @@ const COIN_TYPES = [
     asset: "/assets/MONEDA_01.png",
     weight: 3,
     label: "Moneda 1",
-    points: 20,
+    points: 30,
   },
   {
     key: "coin2",
@@ -26,14 +26,14 @@ const COIN_TYPES = [
     asset: "/assets/LOGO-BETPLAY.png",
     weight: 1,
     label: "Logo Betplay",
-    points: 80,
+    points: 70,
   },
   {
     key: "dorado",
     asset: "/assets/TEXTO-DORADO.png",
     weight: 1,
     label: "Texto Dorado",
-    points: 100,
+    points: 80,
   },
 ];
 
@@ -57,6 +57,7 @@ export default function CoinGame() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
         this.load.image("legales", "/assets/LEGALES.png");
         this.load.image("header", "/assets/FRASE_SUPERIOR.png");
+        this.load.audio("coinSound", "/assets/coin-sound.mp3");
       }
 
       create() {
@@ -64,6 +65,7 @@ export default function CoinGame() {
         this.counts = {};
         this.scores = {};
         this.timerEvent = null;
+        this.coinSound = this.sound.add("coinSound");
 
         // Header FRASE_SUPERIOR (depth 4)
         this.headerImg = this.add
@@ -210,6 +212,9 @@ export default function CoinGame() {
 
       collectCoin(coin) {
         if (this.timeLeft <= 0 || !coin.active) return;
+
+        this.coinSound.play();
+
         this.counts[coin.type]++;
         this.scores[coin.type] += coin.points;
         this.texts[coin.type].setText(
