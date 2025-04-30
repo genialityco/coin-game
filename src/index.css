@@ -133,8 +133,8 @@ button:focus-visible {
 .logo_solar {
   position: absolute;
   bottom: 50px;
-  left: 52%;
-  width: 180px;
+  left: 50%;
+  width: 350px;
   height: auto;
   /* centrado horizontal + animación */
   transform: translateX(-50%);
@@ -146,7 +146,7 @@ button:focus-visible {
   font-size: 1.5rem;
   font-weight: 800;
   padding: .75rem 1.5rem;
-  background: #e1aa4a;
+  background: #ffcc00;
   box-shadow: 0 0 5px #e1aa4a, 0 0 25px #e1aa4a, 0 0 50px #e1aa4a;
   color: #fff;
   border: none;
@@ -161,8 +161,8 @@ button:focus-visible {
 /* Botón semitransparente “Ver premios” */
 .premios-button {
   position: fixed;
-  bottom: 60%;
-  left: 100px;
+  bottom: 10px;
+  left: 10px;
   font-size: 1.4rem;
   font-weight: 700;
   padding: 0.6rem 1.2rem;
