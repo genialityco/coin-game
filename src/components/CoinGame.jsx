@@ -9,28 +9,28 @@ const GAME_TIME = 20;
 const COIN_TYPES = [
   {
     key: "coin1",
-    asset: "/assets/MONEDA_01.png",
+    asset: "/assets/SOL.png",
     weight: 3,
     label: "Moneda 1",
     points: 30,
   },
   {
     key: "coin2",
-    asset: "/assets/MONEDA_02.png",
-    weight: 1,
+    asset: "/assets/LOGO-BETPLAY.png",
+    weight: 3,
     label: "Moneda 2",
     points: 40,
   },
   {
     key: "betplay",
-    asset: "/assets/LOGO-BETPLAY.png",
+    asset: "/assets/MONEDA_02.png",
     weight: 1,
     label: "Logo Betplay",
     points: 70,
   },
   {
     key: "dorado",
-    asset: "/assets/TEXTO-DORADO.png",
+    asset: "/assets/LOGO-LA-SOLAR.png",
     weight: 1,
     label: "Texto Dorado",
     points: 80,
@@ -56,7 +56,7 @@ export default function CoinGame() {
       preload() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
         this.load.image("legales", "/assets/LEGALES.png");
-        this.load.image("header", "/assets/FRASE_SUPERIOR.png");
+        this.load.image("header", "/assets/SLOGAN.png");
         this.load.audio("coinSound", "/assets/coin-sound.mp3");
       }
 
@@ -116,10 +116,13 @@ export default function CoinGame() {
 
           const yRow = panelY + 10 + idx * 40;
 
+          const iconScale = ct.key === "coin2" ? 0.1 : 0.045;
+
+
           // Icono centrado a la izquierda del centro
           this.add
-            .image(contentCenterX - 40, yRow + 15, ct.key)
-            .setScale(0.055)
+            .image(contentCenterX - 50, yRow + 15, ct.key)
+            .setScale(iconScale)
             .setDepth(2)
             .setOrigin(0.5);
 
@@ -188,10 +191,10 @@ export default function CoinGame() {
           .setInteractive({ useHandCursor: true })
           .setDepth(0);
         let customScale;
-        if (chosen.key === "betplay") {
+        if (chosen.key === "coin2") {
           customScale = 0.18;
         } else if (chosen.key === "dorado") {
-          customScale = 0.15; // ajusta este valor al tamaño que quieras para "dorado"
+          customScale = 0.1; // ajusta este valor al tamaño que quieras para "dorado"
         } else {
           customScale = COIN_SCALE;
         }
@@ -300,7 +303,8 @@ export default function CoinGame() {
       {/* OVERLAY INICIAL */}
       {!started && (
         <div className="coin-overlay">
-          <img src="/assets/MONEDAS.png" alt="Monedas" className="logo" />
+          <img src="/assets/MONEDA_02.png" alt="Monedas" className="logo"  />
+          <img src="/assets/SOL.png" alt="Monedas" className="logo_solar"  />
 
           <button
             className="premios-button"

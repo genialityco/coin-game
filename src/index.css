@@ -41,7 +41,7 @@ html, body, #root {
   overflow: hidden;
 
   /* fondo cuadrado */
-  background-image: url('/assets/FONDO_INICIO.png');
+  background-image: url('/assets/FONDO.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
@@ -121,9 +121,20 @@ button:focus-visible {
 
 .logo {
   position: absolute;
-  bottom: 100px;
-  left: 50%;
-  width: 230px;
+  bottom: 50px;
+  left: 47%;
+  width: 180px;
+  height: auto;
+  /* centrado horizontal + animación */
+  transform: translateX(-50%);
+  animation: floatY 2.5s ease-in-out infinite;
+}
+
+.logo_solar {
+  position: absolute;
+  bottom: 50px;
+  left: 52%;
+  width: 180px;
   height: auto;
   /* centrado horizontal + animación */
   transform: translateX(-50%);
