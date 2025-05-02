@@ -57,15 +57,16 @@ export default function CoinGame() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
         this.load.image("legales", "/assets/LEGALES.png");
         this.load.image("header", "/assets/SLOGAN.png");
-        // this.load.audio("coinSound", "/assets/coin-sound.mp3");
+        this.load.audio("coinSound", "/assets/coin-sound.mp3");
       }
 
       create() {
         this.timeLeft = GAME_TIME;
+        this.input.addPointer(3);
         this.counts = {};
         this.scores = {};
         this.timerEvent = null;
-        // this.coinSound = this.sound.add("coinSound");
+        this.coinSound = this.sound.add("coinSound");
 
         // Header FRASE_SUPERIOR (depth 4)
         this.headerImg = this.add
@@ -216,7 +217,7 @@ export default function CoinGame() {
       collectCoin(coin) {
         if (this.timeLeft <= 0 || !coin.active) return;
 
-        // this.coinSound.play();
+        this.coinSound.play();
 
         this.counts[coin.type]++;
         this.scores[coin.type] += coin.points;

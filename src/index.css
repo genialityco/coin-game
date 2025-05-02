@@ -161,8 +161,8 @@ button:focus-visible {
 /* Botón semitransparente “Ver premios” */
 .premios-button {
   position: fixed;
-  bottom: 10px;
-  left: 10px;
+  bottom: 10%;
+  left: 10%;
   font-size: 1.4rem;
   font-weight: 700;
   padding: 0.6rem 1.2rem;
