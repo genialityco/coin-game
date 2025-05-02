@@ -46,7 +46,7 @@ export default function CoinGame() {
     if (!started) return;
 
     const container = gameContainer.current;
-    let side = container.clientWidth;
+    let side = Math.min(container.clientWidth, container.clientHeight);
 
     class CoinScene extends Phaser.Scene {
       constructor() {
@@ -288,8 +288,8 @@ export default function CoinGame() {
     });
 
     const onResize = () => {
-      side = container.clientWidth;
-      game.scale.resize(side, side);
+      const newSide = Math.min(container.clientWidth, container.clientHeight);
+      game.scale.resize(newSide, newSide);
     };
     window.addEventListener("resize", onResize);
 

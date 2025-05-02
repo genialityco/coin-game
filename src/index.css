@@ -23,24 +23,20 @@ a:hover {
 }
 
 html, body, #root {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
 
-.coin-container {
-  /* lado = min(altura de viewport, ancho de viewport) */
-  width: 100vw;
-  height: 100vh;
 
-  /* centrar en la pantalla */
+.coin-container {
+  width: 100vmin;
+  height: 100vmin;
   margin: auto;
   position: relative;
   overflow: hidden;
 
-  /* fondo cuadrado */
   background-image: url('/assets/FONDO.png');
   background-repeat: no-repeat;
   background-position: center center;
