@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
 import Phaser from "phaser";
 import "../index.css";
 
@@ -9,7 +10,7 @@ const GAME_TIME = 20;
 const COIN_TYPES = [
   {
     key: "coin1",
-    asset: "/assets/SOL.png",
+    asset: "/assets/SIMBOLO_BETPLAY.png",
     weight: 3,
     label: "Moneda 1",
     points: 20,
@@ -27,14 +28,7 @@ const COIN_TYPES = [
     weight: 1,
     label: "Logo Betplay",
     points: 50,
-  },
-  {
-    key: "dorado",
-    asset: "/assets/LOGO-LA-SOLAR.png",
-    weight: 1,
-    label: "Texto Dorado",
-    points: 60,
-  },
+  }
 ];
 
 export default function CoinGame() {
@@ -56,8 +50,8 @@ export default function CoinGame() {
       preload() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
         this.load.image("legales", "/assets/LEGALES.png");
-        this.load.image("header", "/assets/SLOGAN.png");
-        this.load.audio("coinSound", "/assets/coin-sound.mp3");
+        this.load.image("header", "/assets/FRASE_COPY.png");
+        // this.load.audio("coinSound", "/assets/coin-sound.mp3");
       }
 
       create() {
@@ -66,7 +60,7 @@ export default function CoinGame() {
         this.counts = {};
         this.scores = {};
         this.timerEvent = null;
-        this.coinSound = this.sound.add("coinSound");
+        // this.coinSound = this.sound.add("coinSound");
 
         // Header FRASE_SUPERIOR (depth 4)
         this.headerImg = this.add
@@ -217,7 +211,7 @@ export default function CoinGame() {
       collectCoin(coin) {
         if (this.timeLeft <= 0 || !coin.active) return;
 
-        this.coinSound.play();
+        // this.coinSound.play();
 
         this.counts[coin.type]++;
         this.scores[coin.type] += coin.points;
@@ -299,53 +293,56 @@ export default function CoinGame() {
     };
   }, [started]);
 
-  return (
-    <div ref={gameContainer} className="coin-container" key={started}>
-      {/* OVERLAY INICIAL */}
-      {!started && (
-        <div className="coin-overlay">
-          <img src="/assets/SOL.png" alt="Monedas" className="logo_solar"  />
-
-          <button
-            className="premios-button"
-            onClick={() => setShowPremios(true)}
-          >
-            Ver premios
-          </button>
-
-          <button
-            className="start-button"
-            onClick={() => setStarted(true)}
-          >
-            EMPEZAR
-          </button>
-        </div>
-      )}
-
-      {/* MODAL DE PREMIOS */}
-      {showPremios && (
-        <div
-          className="premios-modal"
+  // Modal de premios como portal
+  const premiosModal = showPremios ? ReactDOM.createPortal(
+    <div
+      className="premios-modal"
+      onClick={() => setShowPremios(false)}
+    >
+      <div
+        className="premios-modal-content"
+        onClick={e => e.stopPropagation()}
+      >
+        <button
+          className="premios-modal-close"
           onClick={() => setShowPremios(false)}
         >
-          <div
-            className="premios-modal-content"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Botón de cerrar */}
+          &times;
+        </button>
+        <img
+          src="/assets/PREMIOS.png"
+          alt="Premios"
+        />
+      </div>
+    </div>,
+    document.body
+  ) : null;
+
+  return (
+    <>
+      <div ref={gameContainer} className="coin-container" key={started}>
+        {/* OVERLAY INICIAL */}
+        {!started && (
+          <div className="coin-overlay">
+            <img src="/assets/MONEDAS.png" alt="Monedas" className="logo_solar"  />
+
             <button
-              className="premios-modal-close"
-              onClick={() => setShowPremios(false)}
+              className="premios-button"
+              onClick={() => setShowPremios(true)}
             >
-              &times;
+              Ver premios
             </button>
-            <img
-              src="/assets/PREMIOS.png"
-              alt="Premios"
-            />
+
+            <button
+              className="start-button"
+              onClick={() => setStarted(true)}
+            >
+              EMPEZAR
+            </button>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+      {premiosModal}
+    </>
   );
 }
