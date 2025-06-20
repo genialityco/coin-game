@@ -188,8 +188,8 @@ button:focus-visible {
 /* Botón semitransparente “Ver premios” */
 .premios-button {
   position: fixed;
-  bottom: 50%;
-  left: 10%;
+  bottom: 2%;
+  left: 2%;
   font-size: 1.4rem;
   font-weight: 700;
   padding: 0.6rem 1.2rem;
@@ -218,7 +218,7 @@ button:focus-visible {
 .premios-modal-content {
   position: relative;
   background: rgba(0,0,0,0.7);
-  padding: 1rem;
+  padding: 3rem;
   border-radius: 8px;
   max-width: 90vw;
   max-height: 90vh;
@@ -229,15 +229,17 @@ button:focus-visible {
 /* Botón de cierre */
 .premios-modal-close {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   background: transparent;
-  border: none;
+  border: 1px solid #fff;
   font-size: 1.5rem;
   color: #fff;
   cursor: pointer;
   line-height: 1;
 }
+
 .premios-modal-close:hover {
   opacity: 0.7;
 }

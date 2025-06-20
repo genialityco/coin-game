@@ -28,13 +28,13 @@ const COIN_TYPES = [
     weight: 1,
     label: "Logo Betplay",
     points: 50,
-  }
+  },
 ];
 
 export default function CoinGame() {
   const gameContainer = useRef(null);
   const [started, setStarted] = useState(false);
-  const [showPremios, setShowPremios] = useState(false);
+  const [showPremios, setShowPremios] = useState(true);
 
   useEffect(() => {
     if (!started) return;
@@ -112,7 +112,6 @@ export default function CoinGame() {
           const yRow = panelY + 10 + idx * 40;
 
           const iconScale = ct.key === "coin2" ? 0.1 : 0.045;
-
 
           // Icono centrado a la izquierda del centro
           this.add
@@ -261,7 +260,11 @@ export default function CoinGame() {
           })
           .setOrigin(0.5)
           .setInteractive({ useHandCursor: true })
-          .on("pointerdown", () => this.scene.restart())
+          .on("pointerdown", () => {
+            this.scene.restart();
+            setStarted(false);
+            setShowPremios(true);
+          })
           .setDepth(6);
       }
 
@@ -294,29 +297,29 @@ export default function CoinGame() {
   }, [started]);
 
   // Modal de premios como portal
-  const premiosModal = showPremios ? ReactDOM.createPortal(
-    <div
-      className="premios-modal"
-      onClick={() => setShowPremios(false)}
-    >
-      <div
-        className="premios-modal-content"
-        onClick={e => e.stopPropagation()}
-      >
-        <button
-          className="premios-modal-close"
+  const premiosModal = showPremios
+    ? ReactDOM.createPortal(
+        <div
+          className="premios-modal"
           onClick={() => setShowPremios(false)}
         >
-          &times;
-        </button>
-        <img
-          src="/assets/PREMIOS.png"
-          alt="Premios"
-        />
-      </div>
-    </div>,
-    document.body
-  ) : null;
+          <div
+            className="premios-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img src="/assets/PREMIOS.png" alt="Premios" />
+
+            <button
+              className="premios-modal-close"
+              onClick={() => setShowPremios(false)}
+            >
+              Continuar
+            </button>
+          </div>
+        </div>,
+        document.body
+      )
+    : null;
 
   return (
     <>
@@ -324,23 +327,24 @@ export default function CoinGame() {
         {/* OVERLAY INICIAL */}
         {!started && (
           <div className="coin-overlay">
-            <img src="/assets/MONEDAS.png" alt="Monedas" className="logo_solar"  />
+            <img
+              src="/assets/MONEDAS.png"
+              alt="Monedas"
+              className="logo_solar"
+            />
 
+            <button className="start-button" onClick={() => setStarted(true)}>
+              EMPEZAR
+            </button>
+          </div>
+        )}
+        
             <button
               className="premios-button"
               onClick={() => setShowPremios(true)}
             >
               Ver premios
             </button>
-
-            <button
-              className="start-button"
-              onClick={() => setStarted(true)}
-            >
-              EMPEZAR
-            </button>
-          </div>
-        )}
       </div>
       {premiosModal}
     </>
