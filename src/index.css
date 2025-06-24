@@ -31,8 +31,8 @@ html, body, #root {
 
 
 .coin-container {
-  width: 100vmin;
-  height: 100vmin;
+  width: 100vw;
+  height: 100vh;
   margin: auto;
   position: relative;
   overflow: hidden;
