@@ -5,7 +5,7 @@ import Phaser from 'phaser';
 import { useTouchPoints } from '../hooks/useTouchPoints';
 import '../index.css';
 import { TouchDebugOverlay } from '../components/TouchDebugOverlay';
-import { setActivePhaserGame } from '../utils/phaserInstance';
+
 const TOTAL_COINS = 30;
 const COIN_SCALE = 0.1;
 const GAME_TIME = 20;
@@ -27,9 +27,7 @@ export default function CoinGame() {
   }, [touchPoints]);
 
   useEffect(() => {
-    console.log("CoinScene no ha iniciado")
     if (!started) return;
-     console.log("started")
     const container = gameContainer.current;
     const side = Math.min(container.clientWidth, container.clientHeight);
 
@@ -202,7 +200,7 @@ export default function CoinGame() {
         if (this.timerEvent) this.timerEvent.remove(false);
       }
     }
-      console.log("CoinScene or")
+
     const game = new Phaser.Game({
       type: Phaser.AUTO,
       parent: container,
@@ -210,8 +208,6 @@ export default function CoinGame() {
       scene: CoinScene,
       scale: { width: side, height: side, mode: Phaser.Scale.NONE }
     });
-    console.log("GAME or",  game)
-    setActivePhaserGame(game);
 
     const onResize = () => {
       const newSide = Math.min(container.clientWidth, container.clientHeight);
@@ -237,19 +233,51 @@ export default function CoinGame() {
   ) : null;
 
 
+  useEffect(() => {
+    setTimeout(() => {
+      const x = 100;
+      const y = 100;
+      const target = document.elementFromPoint(x, y);
+      console.log("[TEST] Element at point:", target);
+
+      if (target) {
+        const event = new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+          clientX: x,
+          clientY: y,
+        });
+        target.dispatchEvent(event);
+        console.log("[TEST] Dispatched click to:", target);
+      }
+    }, 100);
+  }, []);
+
+  useEffect(() => {
+    const handler = () => console.log("[TEST] #test clicked");
+    const el = document.getElementById("test");
+    if (el) el.addEventListener("click", handler);
+    return () => el?.removeEventListener("click", handler);
+  }, []);
+
+
   return (
-    <>
-      <div ref={gameContainer} className="coin-container" key={started}>
-        {!started && (
-          <div className="coin-overlay">
-            <img src="/assets/MONEDAS.png" alt="Monedas" className="logo_solar" />
-            <button className="start-button" onClick={() => setStarted(true)}>EMPEZAR</button>
-          </div>
-        )}
-        <button className="premios-button" onClick={() => setShowPremios(true)}>Ver premios</button>
-      </div>
-      {premiosModal}
-      <TouchDebugOverlay /> 
-    </>
+
+    <div
+      id="test"
+      style={{
+        width: "100vw",
+        height: "100vh",
+        background: "blue",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 9999,
+      }}
+    >
+      HOLA
+    </div>
+  
+    
   );
 }

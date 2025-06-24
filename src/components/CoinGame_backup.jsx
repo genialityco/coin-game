@@ -5,7 +5,7 @@ import Phaser from 'phaser';
 import { useTouchPoints } from '../hooks/useTouchPoints';
 import '../index.css';
 import { TouchDebugOverlay } from '../components/TouchDebugOverlay';
-import { setActivePhaserGame } from '../utils/phaserInstance';
+
 const TOTAL_COINS = 30;
 const COIN_SCALE = 0.1;
 const GAME_TIME = 20;
@@ -27,9 +27,7 @@ export default function CoinGame() {
   }, [touchPoints]);
 
   useEffect(() => {
-    console.log("CoinScene no ha iniciado")
     if (!started) return;
-     console.log("started")
     const container = gameContainer.current;
     const side = Math.min(container.clientWidth, container.clientHeight);
 
@@ -202,7 +200,7 @@ export default function CoinGame() {
         if (this.timerEvent) this.timerEvent.remove(false);
       }
     }
-      console.log("CoinScene or")
+
     const game = new Phaser.Game({
       type: Phaser.AUTO,
       parent: container,
@@ -210,8 +208,6 @@ export default function CoinGame() {
       scene: CoinScene,
       scale: { width: side, height: side, mode: Phaser.Scale.NONE }
     });
-    console.log("GAME or",  game)
-    setActivePhaserGame(game);
 
     const onResize = () => {
       const newSide = Math.min(container.clientWidth, container.clientHeight);
@@ -236,7 +232,6 @@ export default function CoinGame() {
     </div>, document.body
   ) : null;
 
-
   return (
     <>
       <div ref={gameContainer} className="coin-container" key={started}>
@@ -249,7 +244,7 @@ export default function CoinGame() {
         <button className="premios-button" onClick={() => setShowPremios(true)}>Ver premios</button>
       </div>
       {premiosModal}
-      <TouchDebugOverlay /> 
+       <TouchDebugOverlay />
     </>
   );
 }
