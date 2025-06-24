@@ -15,7 +15,7 @@ const COIN_TYPES = [
     weight: 3,
     label: "Moneda 1",
     points: 20,
-  },
+  },  
   {
     key: "betplay",
     asset: "/assets/MONEDA_02.png",
