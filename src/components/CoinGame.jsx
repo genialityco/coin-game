@@ -232,7 +232,6 @@ export default function CoinGame() {
     };
   }, [started]);
 
-<<<<<<< HEAD
   const premiosModal = showPremios ? ReactDOM.createPortal(
     <div className="premios-modal" onClick={() => setShowPremios(false)}>
       <div className="premios-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -243,7 +242,6 @@ export default function CoinGame() {
       </div>
     </div>, document.body
   ) : null;
-=======
   const handleSimulate = () => {
     const game = gameRef.current;
     if (!game) return;
@@ -281,7 +279,6 @@ export default function CoinGame() {
             onClick={(e) => e.stopPropagation()}
           >
             <img src="/assets/PREMIOS.png" alt="Premios" />
->>>>>>> 68cf3c9ecf97d893ce137747adb8068d989f03ed
 
 
   return (
