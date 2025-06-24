@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import Phaser from "phaser";
+// import { simulateClickOnCanvas } from "../utils/simulateClick";
 import "../index.css";
 
 const TOTAL_COINS = 30;
@@ -33,6 +34,7 @@ const COIN_TYPES = [
 
 export default function CoinGame() {
   const gameContainer = useRef(null);
+  const gameRef = useRef(null);
   const [started, setStarted] = useState(false);
   const [showPremios, setShowPremios] = useState(true);
 
@@ -284,6 +286,8 @@ export default function CoinGame() {
       scale: { width: side, height: side, mode: Phaser.Scale.NONE },
     });
 
+    gameRef.current = game;
+
     const onResize = () => {
       const newSide = Math.min(container.clientWidth, container.clientHeight);
       game.scale.resize(newSide, newSide);
@@ -296,13 +300,38 @@ export default function CoinGame() {
     };
   }, [started]);
 
+  const handleSimulate = () => {
+    const game = gameRef.current;
+    if (!game) return;
+    // 1) Genera coordenadas donde quieres “tocar”
+    const x = Math.random() * game.scale.width;
+    const y = Math.random() * game.scale.height;
+
+    // 2) Obtén tu escena
+    const scene = game.scene.getScene("CoinScene") || game.scene.scenes[0];
+
+    // 3) Prepara el puntero
+    const pointer = scene.input.activePointer;
+    pointer.x = x;
+    pointer.y = y;
+
+    // 4) Hit-test manual sobre las coins
+    const coins = scene.coins.getChildren();
+    const hits = scene.input.hitTestPointer(pointer, coins);
+    if (hits.length) {
+      scene.collectCoin(hits[0]);
+      console.log(`Coin recolectada en (${x.toFixed(2)}, ${y.toFixed(2)})`);
+    } else {
+      console.log(
+        `No había ninguna coin en (${x.toFixed(2)}, ${y.toFixed(2)})`
+      );
+    }
+  };
+
   // Modal de premios como portal
   const premiosModal = showPremios
     ? ReactDOM.createPortal(
-        <div
-          className="premios-modal"
-          onClick={() => setShowPremios(false)}
-        >
+        <div className="premios-modal" onClick={() => setShowPremios(false)}>
           <div
             className="premios-modal-content"
             onClick={(e) => e.stopPropagation()}
@@ -338,13 +367,13 @@ export default function CoinGame() {
             </button>
           </div>
         )}
-        
-            <button
-              className="premios-button"
-              onClick={() => setShowPremios(true)}
-            >
-              Ver premios
-            </button>
+
+        <button className="premios-button" onClick={() => setShowPremios(true)}>
+          Ver premios
+        </button>
+        <button className="simulate-button" onClick={handleSimulate}>
+          Simular Clic
+        </button>
       </div>
       {premiosModal}
     </>
