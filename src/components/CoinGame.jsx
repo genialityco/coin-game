@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // pages/CoinGame.tsx
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
@@ -125,7 +126,18 @@ export default function CoinGame() {
 
         this.coins = this.add.group();
         const totalWeight = COIN_TYPES.reduce((s, ct) => s + ct.weight, 0);
-        for (let i = 0; i < TOTAL_COINS; i++) this.spawnCoin(totalWeight);
+
+        let spawnedCoins = 0;
+        const spawnInterval = 500;
+
+        this.coinSpawnTimer = this.time.addEvent({
+          delay: spawnInterval,
+          repeat: TOTAL_COINS - 1,
+          callback: () => {
+            this.spawnCoin(totalWeight);
+            spawnedCoins++;
+          },
+        });
 
         this.input.on("gameobjectdown", (_, coin) => this.collectCoin(coin));
 
@@ -194,9 +206,10 @@ export default function CoinGame() {
         const chosen = COIN_TYPES.find((ct) => (acc += ct.weight) >= rnd);
 
         const tex = this.textures.get(chosen.key).getSourceImage();
-        const wTx = tex.width * COIN_SCALE;
+        // const wTx = tex.width * COIN_SCALE;
         const hTx = tex.height * COIN_SCALE;
-        const x = Phaser.Math.Between(wTx / 2, this.scale.width - wTx / 2);
+        const marginX = this.scale.width * 0.20; // 15% de margen a cada lado (70% total)
+        const x = Phaser.Math.Between(marginX, this.scale.width - marginX);
         const startY = Phaser.Math.Between(-hTx, 0);
         const endY = this.scale.height + hTx;
 
@@ -213,7 +226,7 @@ export default function CoinGame() {
         this.tweens.add({
           targets: coin,
           y: endY,
-          duration: Phaser.Math.Between(8000, 11000),
+          duration: Phaser.Math.Between(6000, 9000),
           ease: "Linear",
           repeat: -1,
           repeatDelay: Phaser.Math.Between(0, 1000),
