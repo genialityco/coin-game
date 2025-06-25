@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import Phaser from "phaser";
 import { useTouchPoints } from "../hooks/useTouchPoints";
 import "../index.css";
-import { TouchDebugOverlay } from "../components/TouchDebugOverlay";
+import { TouchDebugOverlay } from "./TouchDebugOverlay";
 import { setActivePhaserGame } from "../utils/phaserInstance";
 
 // import { simulateClickOnCanvas } from "../utils/simulateClick";
@@ -123,6 +123,8 @@ export default function CoinGame() {
             .setDepth(2)
             .setOrigin(0.1, 0);
         });
+
+        this.botones = this.add.group();
 
         this.coins = this.add.group();
         const totalWeight = COIN_TYPES.reduce((s, ct) => s + ct.weight, 0);
@@ -273,7 +275,7 @@ export default function CoinGame() {
           .setDepth(6);
         cy += 50;
 
-        this.add
+        let boton_reiniciar = this.add
           .text(cx, cy, "REINICIAR", {
             font: "26px Arial",
             fill: "#fff",
@@ -283,17 +285,21 @@ export default function CoinGame() {
           .setOrigin(0.5)
           .setInteractive()
           .on("pointerdown", () => {
+
             this.scene.restart();
             setStarted(false);
             setShowPremios(true);
           })
           .setDepth(6);
+        this.botones.add(boton_reiniciar)
       }
 
       shutdown() {
         if (this.timerEvent) this.timerEvent.remove(false);
       }
     }
+
+
     console.log("CoinScene or");
     const game = new Phaser.Game({
       type: Phaser.AUTO,
@@ -321,22 +327,22 @@ export default function CoinGame() {
 
   const premiosModal = showPremios
     ? ReactDOM.createPortal(
-        <div className="premios-modal" onClick={() => setShowPremios(false)}>
-          <div
-            className="premios-modal-content"
-            onClick={(e) => e.stopPropagation()}
+      <div className="premios-modal" onClick={() => setShowPremios(false)}>
+        <div
+          className="premios-modal-content"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <img src="/assets/PREMIOS.png" alt="Premios" />
+          <button
+            className="premios-modal-close"
+            onClick={() => setShowPremios(false)}
           >
-            <img src="/assets/PREMIOS.png" alt="Premios" />
-            <button
-              className="premios-modal-close"
-              onClick={() => setShowPremios(false)}
-            >
-              Continuar
-            </button>
-          </div>
-        </div>,
-        document.body
-      )
+            Continuar
+          </button>
+        </div>
+      </div>,
+      document.body
+    )
     : null;
 
   // const handleSimulate = () => {

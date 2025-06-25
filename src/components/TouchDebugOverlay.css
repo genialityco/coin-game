@@ -19,6 +19,7 @@
   border: 2px solid white;
   transform: translate(-50%, -50%);
   pointer-events: none; /* 👈 This is key */
+  z-index:999999;
 }
 
 .touch-point-marker.touching {
