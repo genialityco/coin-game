@@ -188,7 +188,7 @@ button:focus-visible {
 /* Botón semitransparente “Ver premios” */
 .premios-button {
   position: fixed;
-  bottom: 2%;
+  top: 2%;
   left: 2%;
   font-size: 1.4rem;
   font-weight: 700;
@@ -229,7 +229,7 @@ button:focus-visible {
 /* Botón de cierre */
 .premios-modal-close {
   position: absolute;
-  bottom: 0.5rem;
+  top: 0.5rem;
   left: 50%;
   transform: translateX(-50%);
   background: transparent;
