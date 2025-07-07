@@ -388,14 +388,14 @@ export default function CoinGame() {
             </button>
           </div>
         )}
-        <button className="premios-button" onClick={() => setShowPremios(true)}>
+        {/* <button className="premios-button" onClick={() => setShowPremios(true)}>
           Ver premios
-        </button>
+        </button> */}
         {/* <button className="simulate-button" onClick={handleSimulate}>
           Simular Clic
         </button> */}
       </div>
-      {premiosModal}
+      {/* {premiosModal} */}
       <TouchDebugOverlay />
     </>
   );
