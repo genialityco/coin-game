@@ -127,9 +127,9 @@ button:focus-visible {
 
 .logo_solar {
   position: absolute;
-  bottom: 50px;
+  top: 60px;
   left: 50%;
-  width: 300px;
+  width: 400px;
   height: auto;
   /* centrado horizontal + animación */
   transform: translateX(-50%);
@@ -143,9 +143,7 @@ button:focus-visible {
   line-height: 1;                    /* para centrar el texto en vertical */
   
   /* fondo: degradado sutil sobre la imagen */
-  background-image:
-
-    url('/assets/BOTON_COMENZAR.png');
+  background-image: url('/assets/quinta/BOTON_COMENZAR_QUINTA.png');
   background-size: cover;
   background-position: center;
   
@@ -155,8 +153,7 @@ button:focus-visible {
     0 0 10px rgba(10,46,107,0.6),
     0 0 20px rgba(10,46,107,0.4);
   
-  color: #fff;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);  /* legibilidad sobre la textura */
+  color: #073f00;
   border: none;
   border-radius: 12px;               /* curvatura más definida */
   cursor: pointer;

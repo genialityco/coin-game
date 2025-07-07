@@ -16,7 +16,7 @@ const GAME_TIME = 20;
 const COIN_TYPES = [
   {
     key: "coin1",
-    asset: "/assets/SIMBOLO_BETPLAY.png",
+    asset: "/assets/quinta/MANO_JUEGO.png",
     weight: 3,
     label: "Moneda 1",
     points: 20,
@@ -24,7 +24,7 @@ const COIN_TYPES = [
 
   {
     key: "betplay",
-    asset: "/assets/MONEDA_02.png",
+    asset: "/assets/quinta/LOGO_QUINTA_JUEGO.png",
     weight: 1,
     label: "Logo Betplay",
     points: 50,
@@ -57,8 +57,8 @@ export default function CoinGame() {
 
       preload() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
-        this.load.image("legales", "/assets/LEGALES.png");
-        this.load.image("header", "/assets/FRASE_COPY.png");
+        this.load.image("legales", "/assets/quinta/TEXTOS_LEGALES.png");
+        this.load.image("header", "/assets/quinta/LOGO_QUINTA_SUERIOR.png");
       }
 
       create() {
@@ -379,7 +379,7 @@ export default function CoinGame() {
         {!started && (
           <div className="coin-overlay">
             <img
-              src="/assets/MONEDAS.png"
+              src="/assets/quinta/LOGO_QUINTA_SUERIOR.png"
               alt="Monedas"
               className="logo_solar"
             />

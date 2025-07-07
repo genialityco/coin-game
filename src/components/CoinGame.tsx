@@ -378,7 +378,7 @@ export default function CoinGame() {
         {!started && (
           <div className="coin-overlay">
             <img
-              src="/assets/MONEDAS.png"
+              src="/assets/quinta/LOGO_QUINTA_SUERIOR.png"
               alt="Monedas"
               className="logo_solar"
             />
