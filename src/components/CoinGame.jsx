@@ -59,6 +59,7 @@ export default function CoinGame() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
         this.load.image("legales", "/assets/quinta/TEXTOS_LEGALES.png");
         this.load.image("header", "/assets/quinta/LOGO_QUINTA_SUERIOR.png");
+        this.load.audio("coinSound", "/assets/coin-sound.mp3"); // <-- Agrega esto
       }
 
       create() {
@@ -237,6 +238,7 @@ export default function CoinGame() {
 
       collectCoin(coin) {
         if (this.timeLeft <= 0 || !coin.active) return;
+        if (this.coinSound) this.coinSound.play(); // <-- Reproduce el sonido
         this.counts[coin.type]++;
         this.scores[coin.type] += coin.points;
         this.texts[coin.type].setText(
@@ -267,7 +269,7 @@ export default function CoinGame() {
           .setDepth(6);
         cy += 40;
         this.add
-          .text(cx, cy, `Puntos: ${total}`, {
+          .text(cx, cy, `Has conseguido ${total} puntos!`, {
             font: "24px Arial",
             fill: "#e1aa4a",
           })
