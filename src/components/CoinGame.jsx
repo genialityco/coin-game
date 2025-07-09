@@ -72,7 +72,7 @@ export default function CoinGame() {
 
         this.headerImg = this.add
           .image(this.scale.width / 2, 50, "header")
-          .setOrigin(0.5, 0)
+          .setOrigin(0.5, -0.5)
           .setScale(0.25)
           .setDepth(4);
         this.footerImg = this.add
@@ -87,12 +87,12 @@ export default function CoinGame() {
             fontWeight: "bold",
             color: "#ffffff",
           })
-          .setOrigin(1, -1)
+          .setOrigin(1, -2.5)
           .setDepth(3);
 
         const panelWidth = 190,
           panelX = this.scale.width - panelWidth - 10,
-          panelY = 80,
+          panelY = 120,
           panelHeight = COIN_TYPES.length * 40 + 20;
         const gfx = this.add.graphics().setDepth(1);
         gfx
@@ -213,7 +213,7 @@ export default function CoinGame() {
         const tex = this.textures.get(chosen.key).getSourceImage();
         // const wTx = tex.width * COIN_SCALE;
         const hTx = tex.height * COIN_SCALE;
-        const marginX = this.scale.width * 0.20; // 15% de margen a cada lado (70% total)
+        const marginX = this.scale.width * 0.15; // 15% de margen a cada lado (70% total)
         const x = Phaser.Math.Between(marginX, this.scale.width - marginX);
         const startY = Phaser.Math.Between(-hTx, 0);
         const endY = this.scale.height + hTx;
