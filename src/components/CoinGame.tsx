@@ -5,8 +5,9 @@ import ReactDOM from "react-dom";
 import Phaser from "phaser";
 import { useTouchPoints } from "../hooks/useTouchPoints";
 import "../index.css";
-import { TouchDebugOverlay } from "./TouchDebugOverlay";
+
 import { setActivePhaserGame } from "../utils/phaserInstance";
+import { HandOverlay } from "./HandOverlay";
 
 // import { simulateClickOnCanvas } from "../utils/simulateClick";
 
@@ -395,7 +396,7 @@ export default function CoinGame() {
         </button> */}
       </div>
       {premiosModal}
-      <TouchDebugOverlay />
+      <HandOverlay />
     </>
   );
 }

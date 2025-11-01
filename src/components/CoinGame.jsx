@@ -7,26 +7,27 @@ import { useTouchPoints } from "../hooks/useTouchPoints";
 import "../index.css";
 import { TouchDebugOverlay } from "./TouchDebugOverlay";
 import { setActivePhaserGame } from "../utils/phaserInstance";
+import { HandOverlay } from "./HandOverlay";
 
 // import { simulateClickOnCanvas } from "../utils/simulateClick";
 
 const TOTAL_COINS = 30;
-const COIN_SCALE = 0.1;
+const COIN_SCALE = 0.8;
 const GAME_TIME = 20;
 const COIN_TYPES = [
   {
     key: "coin1",
-    asset: "/assets/quinta/MANO_JUEGO.png",
+    asset: "/assets/colombia 4.0/JUEGO CORTES/MONEDAS.png",
     weight: 3,
-    label: "Moneda 1",
+    label: "Moneda",
     points: 20,
   },
 
   {
     key: "betplay",
-    asset: "/assets/quinta/LOGO_QUINTA_JUEGO.png",
+    asset: "/assets/colombia 4.0/JUEGO CORTES/BUHO.png",
     weight: 1,
-    label: "Logo Betplay",
+    label: "Logo Buho",
     points: 50,
   },
 ];
@@ -174,34 +175,47 @@ export default function CoinGame() {
       update() {
         const points = sceneRef.current.touchPoints;
         if (!points || !points.length) return;
-
+      
         const w = this.scale.width;
         const h = this.scale.height;
-
+      
         this.touchMarkers.forEach((marker) => marker.destroy());
         this.touchMarkers = [];
-
+      
         let debugLines = [];
-
+      
+        // AUMENTA ESTE VALOR PARA HACER EL ÁREA DE TOQUE MÁS GRANDE
+        const TOUCH_RADIUS = 160; // píxeles (ajusta según necesites: 60, 80, 100...)
+      
         points.forEach((pt) => {
           if (!pt.is_touching) return;
           const x = w - (pt["2d_x_px"] / 640) * w;
           const y = (pt["2d_y_px"] / 480) * h;
-
-          const marker = this.add.circle(x, y, 8, 0xff0000).setDepth(10);
+      
+          const marker = this.add.circle(x, y, TOUCH_RADIUS, 0xff0000, 0.2).setDepth(10);
           this.touchMarkers.push(marker);
-
+      
           debugLines.push(`${pt.id}: (${Math.round(x)}, ${Math.round(y)})`);
-
+      
+          // Crear un círculo de detección
+          const touchCircle = new Phaser.Geom.Circle(x, y, TOUCH_RADIUS);
+      
           this.coins.children.iterate((coin) => {
             if (!coin || !coin.active) return;
-            const bounds = coin.getBounds();
-            if (Phaser.Geom.Rectangle.Contains(bounds, x, y)) {
+      
+            const coinCenter = coin.getCenter();
+            const distance = Phaser.Math.Distance.BetweenPoints(coinCenter, { x, y });
+      
+            // Ajusta el radio de la moneda (basado en su escala)
+            const coinScale = coin.scaleX;
+            const coinRadius = (coin.displayWidth / 2) * 1.5; // +50% de tolerancia
+      
+            if (distance <= TOUCH_RADIUS + coinRadius) {
               this.collectCoin(coin);
             }
           });
         });
-
+      
         this.touchDebugText.setText(debugLines.join("\n"));
       }
 
@@ -386,7 +400,7 @@ export default function CoinGame() {
         {!started && (
           <div className="coin-overlay">
             <img
-              src="/assets/quinta/LOGO_QUINTA_SUERIOR.png"
+              src="/assets/colombia 4.0/JUEGO CORTES/LOGO_GEN.png"
               alt="Monedas"
               className="logo_solar"
             />
@@ -403,7 +417,7 @@ export default function CoinGame() {
         </button> */}
       </div>
       {/* {premiosModal} */}
-      <TouchDebugOverlay />
+      <HandOverlay />
     </>
   );
 }
