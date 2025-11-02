@@ -72,8 +72,8 @@ export function HandOverlay() {
             key={hand.id}
             className="hand-marker"
             style={{
-              left: x ,
-              top: y - 50,
+              left: x -40,
+              top: y-40,
             
             }}
           >
