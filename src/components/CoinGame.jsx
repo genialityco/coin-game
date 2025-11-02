@@ -58,8 +58,8 @@ export default function CoinGame() {
 
       preload() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
-        this.load.image("legales", "/assets/quinta/TEXTOS_LEGALES.png");
-        this.load.image("header", "/assets/quinta/LOGO_QUINTA_SUERIOR.png");
+        //this.load.image("legales", "/assets/quinta/TEXTOS_LEGALES.png");
+        //this.load.image("header", "/assets/colombia 4.0/JUEGO CORTES/LOGO_GEN.png");
         this.load.audio("coinSound", "/assets/coin-sound.mp3"); 
       }
 
@@ -71,11 +71,11 @@ export default function CoinGame() {
         this.coinSound = this.sound.add("coinSound");
 
 
-        this.headerImg = this.add
-          .image(this.scale.width / 2, 50, "header")
-          .setOrigin(0.5, -0.5)
-          .setScale(0.25)
-          .setDepth(4);
+        // this.headerImg = this.add
+        //   .image(this.scale.width / 2, 50, "header")
+        //   .setOrigin(0.5, -0.5)
+        //   .setScale(0.25)
+        //   .setDepth(4);
         this.footerImg = this.add
           .image(this.scale.width / 2, this.scale.height, "legales")
           .setOrigin(0.5, 1)
@@ -227,7 +227,7 @@ export default function CoinGame() {
         const tex = this.textures.get(chosen.key).getSourceImage();
         // const wTx = tex.width * COIN_SCALE;
         const hTx = tex.height * COIN_SCALE;
-        const marginX = this.scale.width * 0.15; // 15% de margen a cada lado (70% total)
+        const marginX = this.scale.width * 0.25; // 15% de margen a cada lado (70% total)
         const x = Phaser.Math.Between(marginX, this.scale.width - marginX);
         const startY = Phaser.Math.Between(-hTx, 0);
         const endY = this.scale.height + hTx;
