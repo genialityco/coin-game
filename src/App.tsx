@@ -4,7 +4,10 @@ import CoinGame from './components/CoinGame';
 function App() {
   
   return (
-       <CoinGame />
+    <div className='container'>
+      <CoinGame />
+
+    </div>
   );
 }
 

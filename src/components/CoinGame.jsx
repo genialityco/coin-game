@@ -49,7 +49,8 @@ export default function CoinGame() {
     if (!started) return;
     console.log("started");
     const container = gameContainer.current;
-    const side = Math.min(container.clientWidth, container.clientHeight);
+    const width = container.clientWidth;
+    const height = container.clientHeight;
 
     class CoinScene extends Phaser.Scene {
       constructor() {
@@ -81,8 +82,10 @@ export default function CoinGame() {
           .setOrigin(0.5, 1)
           .setScale(0.3)
           .setDepth(4);
+        const rightMargin = 100; // Ajusta este valor para más o menos margen
+        
         this.timerText = this.add
-          .text(this.scale.width - 10, 10, `00:${GAME_TIME}`, {
+          .text(this.scale.width - rightMargin, 10, `00:${GAME_TIME}`, {
             fontFamily: "Arial",
             fontSize: "28px",
             fontWeight: "bold",
@@ -92,7 +95,7 @@ export default function CoinGame() {
           .setDepth(3);
 
         const panelWidth = 190,
-          panelX = this.scale.width - panelWidth - 10,
+          panelX = this.scale.width - panelWidth - rightMargin,
           panelY = 120,
           panelHeight = COIN_TYPES.length * 40 + 20;
         const gfx = this.add.graphics().setDepth(1);
@@ -327,7 +330,12 @@ export default function CoinGame() {
       parent: container,
       transparent: true,
       scene: CoinScene,
-      scale: { width: side, height: side, mode: Phaser.Scale.NONE },
+      scale: { 
+        width: width, 
+        height: height, 
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+      },
     });
     console.log("GAME or", game);
     setActivePhaserGame(game);
@@ -335,8 +343,9 @@ export default function CoinGame() {
     gameRef.current = game;
 
     const onResize = () => {
-      const newSide = Math.min(container.clientWidth, container.clientHeight);
-      game.scale.resize(newSide, newSide);
+      const newWidth = container.clientWidth;
+      const newHeight = container.clientHeight;
+      game.scale.resize(newWidth, newHeight);
     };
     window.addEventListener("resize", onResize);
 
@@ -366,37 +375,9 @@ export default function CoinGame() {
     )
     : null;
 
-  // const handleSimulate = () => {
-  //   const game = gameRef.current;
-  //   if (!game) return;
-  //   // 1) Genera coordenadas donde quieres “tocar”
-  //   const x = Math.random() * game.scale.width;
-  //   const y = Math.random() * game.scale.height;
-
-  //   // 2) Obtén tu escena
-  //   const scene = game.scene.getScene("CoinScene") || game.scene.scenes[0];
-
-  //   // 3) Prepara el puntero
-  //   const pointer = scene.input.activePointer;
-  //   pointer.x = x;
-  //   pointer.y = y;
-
-  //   // 4) Hit-test manual sobre las coins
-  //   const coins = scene.coins.getChildren();
-  //   const hits = scene.input.hitTestPointer(pointer, coins);
-  //   if (hits.length) {
-  //     scene.collectCoin(hits[0]);
-  //     console.log(`Coin recolectada en (${x.toFixed(2)}, ${y.toFixed(2)})`);
-  //   } else {
-  //     console.log(
-  //       `No había ninguna coin en (${x.toFixed(2)}, ${y.toFixed(2)})`
-  //     );
-  //   }
-  // };
-
   return (
     <>
-      <div ref={gameContainer} className="coin-container" key={started}>
+      <div ref={gameContainer} className="coin-container" style={{ padding: '0 20px' }} key={started}>
         {!started && (
           <div className="coin-overlay">
             <img
@@ -409,14 +390,7 @@ export default function CoinGame() {
             </button>
           </div>
         )}
-        {/* <button className="premios-button" onClick={() => setShowPremios(true)}>
-          Ver premios
-        </button> */}
-        {/* <button className="simulate-button" onClick={handleSimulate}>
-          Simular Clic
-        </button> */}
       </div>
-      {/* {premiosModal} */}
       <HandOverlay />
     </>
   );

@@ -28,24 +28,32 @@ html, body, #root {
   align-items: center;
   overflow: hidden;
 }
+.container {
+  width: 100%;
+  height: auto;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-image: url('/assets/colombia 4.0/JUEGO CORTES/JUEGO-MONEDAS.png');
+}
 
 
 .coin-container {
+  display: flex;
+  justify-content: center;
   width: 100vw;
   height: 100vh;
   margin: auto;
   position: relative;
   overflow: hidden;
 
-  background-image: url('/assets/colombia 4.0/JUEGO CORTES/JUEGO-MONEDAS.png');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
+ 
+  
 }
 
 /* que el canvas ocupe todo el contenedor */
 .coin-container canvas {
-  width: 100% !important;
+  width: auto;
   height: 100% !important;
   display: block;
 }
@@ -98,6 +106,7 @@ button:focus-visible {
   align-items: center;
   gap: 1.5rem;
   z-index: 10;
+  width: 100vw;
 }
 
 @keyframes floatY {
