@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import Phaser from "phaser";
 import { useTouchPoints } from "../hooks/useTouchPoints";
 import "../index.css";
-import { TouchDebugOverlay } from "./TouchDebugOverlay";
+//import { TouchDebugOverlay } from "./TouchDebugOverlay";
 import { setActivePhaserGame } from "../utils/phaserInstance";
 import { HandOverlay } from "./HandOverlay";
 

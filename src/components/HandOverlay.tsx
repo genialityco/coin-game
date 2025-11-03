@@ -14,43 +14,50 @@ export function HandOverlay() {
   const lastGrab = React.useRef<Record<string, number>>({});
 
   React.useEffect(() => {
-  const game = getActivePhaserGame();
-  if (!game) return;
-  const scene = game.scene.getScene('CoinScene') as any;
-  if (!scene) return;
-
-  const now = Date.now();
-  const COOLDOWN = 300;
-
-  hands.forEach(hand => {
-    if (!hand.isGrabbing) return;
-    if (hand.depth < DIST_MIN || hand.depth > DIST_MAX) return;
-    if (lastGrab.current[hand.id] && now - lastGrab.current[hand.id] < COOLDOWN) return;
-
-    const canvas = game.canvas;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = game.config.width / rect.width;
-    const scaleY = game.config.height / rect.height;
-
-    const clientX = (1-hand.x) * window.innerWidth;
-    const clientY = hand.y * window.innerHeight;
-    const phaserX = (clientX - rect.left) * scaleX;
-    const phaserY = (clientY - rect.top) * scaleY;
-
-    // Crear un puntero temporal
-    const pointer = { x: phaserX, y: phaserY, id: hand.id } as Phaser.Input.Pointer;
-
-    // Hacer hit-test en las monedas (exactamente como hace Phaser)
-    const coins = scene.coins.getChildren();
-    const hitCoins = scene.input.hitTestPointer(pointer, coins);
-
-    if (hitCoins.length > 0) {
-      const coin = hitCoins[0];
-      scene.collectCoin(coin); // Llama exactamente a la misma función que el clic
-      lastGrab.current[hand.id] = now;
-    }
-  });
-}, [hands]);
+    const game = getActivePhaserGame();
+    if (!game) return;
+  
+    const scene = game.scene.getScene('CoinScene') as any;
+    if (!scene) return;
+  
+    const now = Date.now();
+    const COOLDOWN = 300;
+  
+    hands.forEach(hand => {
+      if (!hand.isGrabbing) return;
+      if (hand.depth < DIST_MIN || hand.depth > DIST_MAX) return;
+      if (lastGrab.current[hand.id] && now - lastGrab.current[hand.id] < COOLDOWN) return;
+  
+      const canvas = game.canvas;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = game.config.width / rect.width;
+      const scaleY = game.config.height / rect.height;
+  
+      const clientX = (1 - hand.x) * window.innerWidth;
+      const clientY = hand.y * window.innerHeight;
+      const phaserX = (clientX - rect.left) * scaleX;
+      const phaserY = (clientY - rect.top) * scaleY;
+  
+      const pointer = { x: phaserX, y: phaserY, id: hand.id } as Phaser.Input.Pointer;
+  
+      // ✅ Verificación segura antes de acceder a coins
+      const coins = scene.coins && typeof scene.coins.getChildren === 'function'
+        ? scene.coins.getChildren()
+        : [];
+  
+      if (coins.length === 0) return;
+  
+      const hitCoins = scene.input.hitTestPointer(pointer, coins);
+  
+      if (hitCoins.length > 0) {
+        const coin = hitCoins[0];
+        if (typeof scene.collectCoin === 'function') {
+          scene.collectCoin(coin);
+        }
+        lastGrab.current[hand.id] = now;
+      }
+    });
+  }, [hands]);
   return (
     <>
       <video

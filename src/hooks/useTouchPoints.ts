@@ -21,10 +21,10 @@ export interface TouchPoint {
 export function useTouchPoints(): TouchPoint[] {
   const [touches, setTouches] = useState<TouchPoint[]>([]);
 
-  const { lastJsonMessage } = useWebSocket('ws://localhost:8000/ws/touches', {
-    share: true,
-    shouldReconnect: () => true,
-  });
+  // const { lastJsonMessage } = useWebSocket('ws://localhost:8000/ws/touches', {
+  //   share: true,
+  //   shouldReconnect: () => true,
+  // });
 
   // --- Función para detectar puño cerrado ---
   const isFist = (landmarks: any[]) => {
@@ -42,15 +42,15 @@ export function useTouchPoints(): TouchPoint[] {
     return curledCount >= 4; // 4+ dedos doblados = puño
   };
 
-  useEffect(() => {
-    if (lastJsonMessage && Array.isArray(lastJsonMessage)) {
-      const processed = lastJsonMessage.map((pt: any) => {
-        const isGrabbing = pt.landmarks ? isFist(pt.landmarks) : false;
-        return { ...pt, is_grabbing: isGrabbing };
-      });
-      setTouches(processed);
-    }
-  }, [lastJsonMessage]);
+  // useEffect(() => {
+  //   if (lastJsonMessage && Array.isArray(lastJsonMessage)) {
+  //     const processed = lastJsonMessage.map((pt: any) => {
+  //       const isGrabbing = pt.landmarks ? isFist(pt.landmarks) : false;
+  //       return { ...pt, is_grabbing: isGrabbing };
+  //     });
+  //     setTouches(processed);
+  //   }
+  // }, [lastJsonMessage]);
 
   return touches;
 }
