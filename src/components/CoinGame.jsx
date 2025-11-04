@@ -13,7 +13,7 @@ import { HandOverlay } from "./HandOverlay";
 
 const TOTAL_COINS = 30;
 const COIN_SCALE = 0.8;
-const GAME_TIME = 20;
+const GAME_TIME = 20; 
 const COIN_TYPES = [
   {
     key: "coin1",
@@ -24,7 +24,7 @@ const COIN_TYPES = [
   },
 
   {
-    key: "betplay",
+    key: "buho",
     asset: "/assets/colombia 4.0/JUEGO CORTES/BUHO.png",
     weight: 1,
     label: "Logo Buho",
