@@ -17,7 +17,7 @@ const GAME_TIME = 20;
 const COIN_TYPES = [
   {
     key: "coin1",
-    asset: "/assets/colombia 4.0/JUEGO CORTES/MONEDAS.png",
+    asset: "/assets/colombia 4.0/JUEGO CORTES/IMPLANTE.png",
     weight: 3,
     label: "Moneda",
     points: 20,

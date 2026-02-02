@@ -12,7 +12,7 @@ const GAME_TIME = 20;
 const COIN_TYPES = [
   { key: 'coin1', asset: '/assets/SIMBOLO_BETPLAY.png', weight: 3, label: 'Moneda 1', points: 20 },
   { key: 'coin2', asset: '/assets/LOGO-BETPLAY.png', weight: 3, label: 'Moneda 2', points: 30 },
-  { key: 'betplay', asset: '/assets/MONEDA_02.png', weight: 1, label: 'Logo Betplay', points: 50 },
+  { key: 'betplay', asset: '/assets/IMPLANTE.png', weight: 1, label: 'Logo Betplay', points: 50 },
 ];
 
 export default function CoinGame() {
