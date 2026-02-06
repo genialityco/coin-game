@@ -17,7 +17,7 @@ const GAME_TIME = 20;
 const COIN_TYPES = [
   {
     key: "coin1",
-    asset: "/assets/colombia 4.0/JUEGO CORTES/IMPLANTE.png",
+    asset: "/assets/colombia 4.0/JUEGO CORTES/MONEDAS.png",
     weight: 3,
     label: "Moneda",
     points: 20,
@@ -175,6 +175,34 @@ export default function CoinGame() {
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
       }
 
+      // NUEVA FUNCIÓN: Muestra el puntaje flotante
+      showFloatingScore(x, y, points) {
+        const scoreText = this.add
+          .text(x, y, `+${points}`, {
+            fontFamily: "Arial",
+            fontSize: "40px",
+            fontWeight: "bold",
+            color: "#FFD700", // Color dorado
+            stroke: "#000000",
+            strokeThickness: 4,
+          })
+          .setOrigin(0.5)
+          .setDepth(9);
+
+        // Animación: se eleva y desaparece
+        this.tweens.add({
+          targets: scoreText,
+          y: y - 100, // Se eleva 100 píxeles
+          alpha: 0, // Desaparece gradualmente
+          scale: 1.3, // Crece un poco
+          duration: 1200, // Duración de 1.2 segundos
+          ease: "Power2",
+          onComplete: () => {
+            scoreText.destroy(); // Elimina el texto cuando termina
+          },
+        });
+      }
+
       update() {
         const points = sceneRef.current.touchPoints;
         if (!points || !points.length) return;
@@ -257,15 +285,26 @@ export default function CoinGame() {
 
       collectCoin(coin) {
         if (this.timeLeft <= 0 || !coin.active) return;
+        
+        // Guarda la posición de la moneda ANTES de destruirla
+        const coinX = coin.x;
+        const coinY = coin.y;
+        const coinPoints = coin.points;
+        
         // Reproduce el sonido solo si está cargado y no está bloqueado
         if (this.coinSound && this.sound.locked === false) {
           this.coinSound.play();
         }
+        
         this.counts[coin.type]++;
         this.scores[coin.type] += coin.points;
         this.texts[coin.type].setText(
           `${this.counts[coin.type]}  |  ${this.scores[coin.type]}`
         );
+        
+        // MUESTRA EL PUNTAJE FLOTANTE
+        this.showFloatingScore(coinX, coinY, coinPoints);
+        
         coin.destroy();
         const totalWeight = COIN_TYPES.reduce((s, ct) => s + ct.weight, 0);
         this.spawnCoin(totalWeight);
