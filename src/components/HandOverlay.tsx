@@ -68,18 +68,29 @@ export function HandOverlay() {
       const phaserY = (clientY - rect.top) * scaleY;
   
       const pointer = { x: phaserX, y: phaserY, id: hand.id } as Phaser.Input.Pointer;
-  
+      console.log("escena lista", scene.isReady);
+       if (!scene || !scene.isReady) {
+    return;
+  }
+
       // ✅ Verificación segura antes de acceder a coins
       if (!scene.coins || !scene.input || !scene.collectCoin) {
         console.warn('Scene no está completamente inicializada');
         return;
       }
 
-      const coins = scene?.coins?.getChildren ? scene.coins.getChildren() : [];
+   const coinsGroup = scene?.coins;
+
+if (!coinsGroup || typeof coinsGroup.getChildren !== 'function') {
+  console.warn('coins no es un Group válido todavía');
+  return;
+}
+if (!scene?.isFullyOperational) {
+  return;
+}
+
+const coins = coinsGroup.getChildren();
   
-      if (!coins || coins.length === 0) {
-        return;
-      }
   
       if (!coins || coins.length === 0) {
         return;

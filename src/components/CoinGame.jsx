@@ -111,7 +111,8 @@ export default function CoinGame() {
         this.scores = {};
         this.timerEvent = null;
         this.coinSound = this.sound.add("coinSound");
-        this.isReady = true;
+        this.isReady = false;
+        this.isFullyOperational = false;
 
 
         // this.headerImg = this.add
@@ -218,6 +219,8 @@ export default function CoinGame() {
         });
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
+        this.isReady = true;
+        this.isFullyOperational = true;
       }
 
       // NUEVA FUNCIÓN: Muestra el puntaje flotante
@@ -696,6 +699,7 @@ export default function CoinGame() {
 
       shutdown() {
         if (this.timerEvent) this.timerEvent.remove(false);
+        this.isFullyOperational = false;
       }
     }
 
