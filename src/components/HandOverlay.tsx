@@ -70,26 +70,43 @@ export function HandOverlay() {
       const pointer = { x: phaserX, y: phaserY, id: hand.id } as Phaser.Input.Pointer;
   
       // ✅ Verificación segura antes de acceder a coins
-      const coins = scene.coins && typeof scene.coins.getChildren === 'function'
+      if (!scene.coins || !scene.input || !scene.collectCoin) {
+        return;
+      }
+
+      const coins = typeof scene.coins.getChildren === 'function'
         ? scene.coins.getChildren()
         : [];
   
-      if (coins.length === 0) {
+      if (!coins || coins.length === 0) {
         return;
       }
   
-      const hitCoins = scene.input.hitTestPointer(pointer, coins);
-  
-      if (hitCoins.length > 0) {
-        const coin = hitCoins[0];
-        if (typeof scene.collectCoin === 'function') {
-          scene.collectCoin(coin);
-          console.log('💥 Globo capturado');
+      try {
+        const hitCoins = scene.input.hitTestPointer(pointer, coins);
+    
+        if (hitCoins && hitCoins.length > 0) {
+          const coin = hitCoins[0];
+          if (typeof scene.collectCoin === 'function') {
+            scene.collectCoin(coin);
+            console.log('💥 Globo capturado');
+          }
+          lastGrab.current[handId] = now;
         }
-        lastGrab.current[handId] = now;
+      } catch (error) {
+        console.warn('Error en detección de globos:', error);
       }
     });
   }, [hands]);
+
+  // Limpiar estado cuando el componente se desmonta
+  React.useEffect(() => {
+    return () => {
+      lastGrab.current = {};
+      lastGrabState.current = {};
+    };
+  }, []);
+
   return (
     <>
       <video
