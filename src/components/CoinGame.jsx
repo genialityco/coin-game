@@ -17,7 +17,7 @@ const GAME_TIME = 20;
 const COIN_TYPES = [
   {
     key: "coin1",
-    asset: "/assets/colombia 4.0/JUEGO CORTES/MONEDAS.png",
+    asset: "/assets/globo_rojo.png",
     weight: 3,
     label: "Moneda",
     points: 20,
@@ -25,7 +25,7 @@ const COIN_TYPES = [
 
   {
     key: "buho",
-    asset: "/assets/colombia 4.0/JUEGO CORTES/BUHO.png",
+    asset: "/assets/globo_dorado.png",
     weight: 1,
     label: "Logo Buho",
     points: 50,
@@ -59,9 +59,11 @@ export default function CoinGame() {
 
       preload() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
+        this.load.image("explosion_rojo", "/assets/globo_rojo_explo.png"); // Cargar imagen de explosión
+        this.load.image("explosion_dorado", "/assets/globo_dorado_explo.png");
         //this.load.image("legales", "/assets/quinta/TEXTOS_LEGALES.png");
         //this.load.image("header", "/assets/colombia 4.0/JUEGO CORTES/LOGO_GEN.png");
-        this.load.audio("coinSound", "/assets/coin-sound.mp3"); 
+        this.load.audio("coinSound", "/assets/globo_ex.mp3"); 
       }
 
       create() {
@@ -268,7 +270,7 @@ export default function CoinGame() {
           .setScale(COIN_SCALE)
           .setInteractive()
           .setDepth(0);
-        coin.setScale(chosen.key === "coin2" ? 0.18 : 0.1);
+        coin.setScale(chosen.key === "coin2" ? 0.35 : 0.25);
         coin.points = chosen.points;
         coin.type = chosen.key;
         this.coins.add(coin);
@@ -276,38 +278,103 @@ export default function CoinGame() {
         this.tweens.add({
           targets: coin,
           y: endY,
-          duration: Phaser.Math.Between(6000, 9000),
+          duration: Phaser.Math.Between(12000, 16000),
           ease: "Linear",
           repeat: -1,
           repeatDelay: Phaser.Math.Between(0, 1000),
         });
       }
 
-      collectCoin(coin) {
-        if (this.timeLeft <= 0 || !coin.active) return;
-        
-        // Guarda la posición de la moneda ANTES de destruirla
-        const coinX = coin.x;
-        const coinY = coin.y;
-        const coinPoints = coin.points;
-        
-        // Reproduce el sonido solo si está cargado y no está bloqueado
-        if (this.coinSound && this.sound.locked === false) {
-          this.coinSound.play();
+  collectCoin(coin) {
+  if (this.timeLeft <= 0 || !coin.active) return;
+  
+  const coinX = coin.x;
+  const coinY = coin.y;
+  const coinPoints = coin.points;
+  
+  if (this.coinSound && this.sound.locked === false) {
+    this.coinSound.play();
+  }
+  const explosionKey = coin.type === "buho" ? "explosion_dorado" : "explosion_rojo";
+  // --- CORRECCIÓN AQUÍ ---
+  // Creamos la explosión con una escala inicial más visible (0.5 o similar)
+  const explosionImage = this.add
+    .image(coinX, coinY, explosionKey)
+    .setScale(0.3) // Aumentamos un poco el tamaño inicial
+    .setDepth(20);  // Aseguramos que esté por encima de TODO (incluso del HUD)
+  
+  this.tweens.add({
+    targets: explosionImage,
+    scale: 0.6,    // Que crezca al explotar
+    alpha: 0,
+    duration: 500,
+    ease: "Cubic.out",
+    onComplete: () => {
+      explosionImage.destroy();
+    },
+  });
+  // ------------------------
+  
+  this.createLightExplosion(coinX, coinY);
+  
+  this.counts[coin.type]++;
+  this.scores[coin.type] += coin.points;
+  this.texts[coin.type].setText(
+    `${this.counts[coin.type]}  |  ${this.scores[coin.type]}`
+  );
+  
+  this.showFloatingScore(coinX, coinY, coinPoints);
+  
+  coin.destroy();
+  const totalWeight = COIN_TYPES.reduce((s, ct) => s + ct.weight, 0);
+  this.spawnCoin(totalWeight);
+}
+
+      createLightExplosion(x, y) {
+        // Crear luces que se dispersan en diferentes direcciones
+        for (let i = 0; i < 15; i++) {
+          const angle = (i / 15) * Math.PI * 2;
+          const speed = Phaser.Math.Between(200, 400);
+          
+          // Luces con diferentes colores (amarillo, naranja, rojo)
+          const colors = [0xffff00, 0xffa500, 0xff6600];
+          const lightColor = colors[Math.floor(Math.random() * colors.length)];
+          
+          const light = this.add.circle(x, y, 8, lightColor, 1);
+          light.setDepth(7);
+          
+          // Animación de dispersión
+          const targetX = x + Math.cos(angle) * 120;
+          const targetY = y + Math.sin(angle) * 120;
+          
+          this.tweens.add({
+            targets: light,
+            x: targetX,
+            y: targetY,
+            alpha: 0,
+            scale: 0.3,
+            duration: 500,
+            ease: "Power2",
+            delay: i * 20, // Efecto de cascada
+            onComplete: () => {
+              light.destroy();
+            },
+          });
         }
         
-        this.counts[coin.type]++;
-        this.scores[coin.type] += coin.points;
-        this.texts[coin.type].setText(
-          `${this.counts[coin.type]}  |  ${this.scores[coin.type]}`
-        );
-        
-        // MUESTRA EL PUNTAJE FLOTANTE
-        this.showFloatingScore(coinX, coinY, coinPoints);
-        
-        coin.destroy();
-        const totalWeight = COIN_TYPES.reduce((s, ct) => s + ct.weight, 0);
-        this.spawnCoin(totalWeight);
+        // Crear un efecto de destello central
+        const flare = this.add.circle(x, y, 20, 0xffffff, 0.8);
+        flare.setDepth(7);
+        this.tweens.add({
+          targets: flare,
+          scale: 0.2,
+          alpha: 0,
+          duration: 300,
+          ease: "Power1",
+          onComplete: () => {
+            flare.destroy();
+          },
+        });
       }
 
       endGame() {

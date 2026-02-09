@@ -88,8 +88,8 @@ export function HandOverlay() {
               src={hand.isGrabbing ? '/assets/hands/hand_grab.png' : '/assets/hands/hand_open.png'}
               alt={hand.isGrabbing ? 'Mano cerrada' : 'Mano abierta'}
               style={{
-                width: '80px',
-                height: '80px',
+                width: '220px',
+                height: '140px',
                 
                 transition: 'transform 0.2s ease',
                 transform: hand.isGrabbing ? 'scale(1.1)' : 'scale(1)',
