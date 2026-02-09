@@ -71,18 +71,27 @@ export function HandOverlay() {
   
       // ✅ Verificación segura antes de acceder a coins
       if (!scene.coins || !scene.input || !scene.collectCoin) {
+        console.warn('Scene no está completamente inicializada');
         return;
       }
 
-      const coins = typeof scene.coins.getChildren === 'function'
-        ? scene.coins.getChildren()
-        : [];
+      const coins = scene?.coins?.getChildren ? scene.coins.getChildren() : [];
+  
+      if (!coins || coins.length === 0) {
+        return;
+      }
   
       if (!coins || coins.length === 0) {
         return;
       }
   
       try {
+        // Validar que hitTestPointer existe y es una función
+        if (!scene.input.hitTestPointer || typeof scene.input.hitTestPointer !== 'function') {
+          console.warn('hitTestPointer no está disponible');
+          return;
+        }
+        
         const hitCoins = scene.input.hitTestPointer(pointer, coins);
     
         if (hitCoins && hitCoins.length > 0) {

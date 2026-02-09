@@ -8,6 +8,7 @@ import "../index.css";
 //import { TouchDebugOverlay } from "./TouchDebugOverlay";
 import { setActivePhaserGame } from "../utils/phaserInstance";
 import { HandOverlay } from "./HandOverlay";
+import { FlameEffect } from "./FlameEffect";
 
 // import { simulateClickOnCanvas } from "../utils/simulateClick";
 
@@ -37,143 +38,47 @@ export default function CoinGame() {
   const gameRef = useRef(null);
   const [started, setStarted] = useState(false);
   const [showPremios, setShowPremios] = useState(true);
-  const [sandParticles, setSandParticles] = useState([]);
-  const [isWindActive, setIsWindActive] = useState(false);
-  const [smokeParticles, setSmokeParticles] = useState([]);
   const touchPoints = useTouchPoints();
   const sceneRef = useRef({ touchPoints });
-  const audioRef = useRef(null);
-  const windIntervalRef = useRef(null);
-  const smokeIntervalRef = useRef(null);
 
-  // Efecto de arena en la pantalla de inicio - Por momentos
+  // Listener para iniciar el juego con gesto sobre el botón de START
   useEffect(() => {
-    if (started) {
-      // Detener efecto cuando el juego inicia
-      if (windIntervalRef.current) {
-        clearInterval(windIntervalRef.current);
-      }
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-      return;
-    }
+    if (started) return;
 
-    // Función para generar partículas
-    const generateSandParticles = () => {
-      const direction = Math.random() > 0.5 ? 'ltr' : 'rtl'; // Una dirección por ráfaga
-      const newParticles = [];
-      for (let i = 0; i < 200; i++) {
-        newParticles.push({
-          id: Math.random(),
-          left: Math.random() * 100,
-          top: Math.random() * 40 + 60, // Entre 60% y 100% (parte inferior)
-          size: Math.random() * 6 + 2,
-          duration: Math.random() * 8 + 8,
-          delay: Math.random() * 2,
-          direction: direction, // Todas las partículas van en la misma dirección
-        });
-      }
-      setSandParticles(newParticles);
-      setIsWindActive(true);
+    const handleStartGrab = (event) => {
+      try {
+        const { x, y } = event.detail;
+        const btn = document.querySelector('.start-button');
+        if (!btn) return;
+        const rect = btn.getBoundingClientRect();
+        const margin = 40;
+        const area = {
+          left: rect.left - margin,
+          right: rect.right + margin,
+          top: rect.top - margin,
+          bottom: rect.bottom + margin,
+        };
 
-      // Reproducir sonido del viento
-      if (!audioRef.current) {
-        audioRef.current = new Audio("/assets/desert_wind.mp3");
-      }
-      audioRef.current.volume = 0.4;
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(err => console.warn('Audio autoplay bloqueado:', err));
+        const clientX = (1 - x) * window.innerWidth;
+        const clientY = y * window.innerHeight;
 
-      // Fade out del audio en los últimos 2 segundos
-      setTimeout(() => {
-        let fadeVolume = 0.4;
-        const fadeInterval = setInterval(() => {
-          fadeVolume -= 0.05;
-          if (fadeVolume <= 0) {
-            fadeVolume = 0;
-            audioRef.current.pause();
-            clearInterval(fadeInterval);
-          }
-          if (audioRef.current) {
-            audioRef.current.volume = fadeVolume;
-          }
-        }, 100);
-      }, 10000); // Inicia fade out a los 10 segundos (2 segundos antes del fin)
-
-      // Detener después de 12 segundos
-      setTimeout(() => {
-        setIsWindActive(false);
-        setSandParticles([]);
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current.volume = 0;
+        if (
+          clientX >= area.left &&
+          clientX <= area.right &&
+          clientY >= area.top &&
+          clientY <= area.bottom
+        ) {
+          window.removeEventListener('handGrab', handleStartGrab);
+          setStarted(true);
+          setShowPremios(false);
         }
-      }, 12000);
-    };
-
-    // Activar el efecto cada 20 segundos
-    windIntervalRef.current = setInterval(() => {
-      generateSandParticles();
-    }, 20000);
-
-    // Primera activación después de 3 segundos
-    const firstTimeout = setTimeout(() => {
-      generateSandParticles();
-    }, 3000);
-
-    return () => {
-      if (windIntervalRef.current) {
-        clearInterval(windIntervalRef.current);
-      }
-      clearTimeout(firstTimeout);
-      if (audioRef.current) {
-        audioRef.current.pause();
+      } catch (err) {
+        console.warn('Error al iniciar con gesto:', err);
       }
     };
-  }, [started]);
 
-  // Efecto de humo en la esquina inferior derecha - Continuo
-  useEffect(() => {
-    if (started) {
-      // Detener efecto cuando el juego inicia
-      if (smokeIntervalRef.current) {
-        clearInterval(smokeIntervalRef.current);
-      }
-      setSmokeParticles([]);
-      return;
-    }
-
-    // Función para generar partículas de humo
-    const generateSmokeParticles = () => {
-      const newParticles = [];
-      for (let i = 0; i < 15; i++) {
-        newParticles.push({
-          id: Math.random(),
-          left: Math.random() * 60 - 30, // Desviación horizontal desde el punto de origen
-          size: Math.random() * 40 + 30,
-          duration: Math.random() * 4 + 6,
-          delay: i * 0.15,
-        });
-      }
-      setSmokeParticles(prev => [...prev, ...newParticles]);
-
-      // Limpiar partículas antiguas cada 10 segundos
-      setTimeout(() => {
-        setSmokeParticles(prev => prev.slice(15));
-      }, 10000);
-    };
-
-    // Generar partículas de humo continuamente cada 0.5 segundos
-    smokeIntervalRef.current = setInterval(() => {
-      generateSmokeParticles();
-    }, 500);
-
-    return () => {
-      if (smokeIntervalRef.current) {
-        clearInterval(smokeIntervalRef.current);
-      }
-    };
+    window.addEventListener('handGrab', handleStartGrab);
+    return () => window.removeEventListener('handGrab', handleStartGrab);
   }, [started]);
 
   useEffect(() => {
@@ -206,6 +111,7 @@ export default function CoinGame() {
         this.scores = {};
         this.timerEvent = null;
         this.coinSound = this.sound.add("coinSound");
+        this.isReady = true;
 
 
         // this.headerImg = this.add
@@ -850,45 +756,11 @@ export default function CoinGame() {
       <div ref={gameContainer} className="coin-container" style={{ padding: '0 20px' }} key={started}>
         {!started && (
           <div className="coin-overlay">
-            {/* Efecto de arena moviéndose */}
-            {sandParticles.length > 0 && (
-              <div className="sand-effect">
-                {sandParticles.map((particle) => (
-                  <div
-                    key={particle.id}
-                    className={`sand-particle sand-${particle.direction}`}
-                    style={{
-                      left: `${particle.left}%`,
-                      top: `${particle.top}%`,
-                      width: `${particle.size}px`,
-                      height: `${particle.size}px`,
-                      animation: `sandDrift-${particle.direction} ${particle.duration}s linear ${particle.delay}s forwards`,
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-            
-            {/* Efecto de humo en esquina inferior derecha */}
-            {smokeParticles.length > 0 && (
-              <div className="smoke-effect">
-                {smokeParticles.map((particle) => (
-                  <div
-                    key={particle.id}
-                    className="smoke-particle"
-                    style={{
-                      left: `${particle.left}px`,
-                      width: `${particle.size}px`,
-                      height: `${particle.size}px`,
-                      animation: `smokeRise ${particle.duration}s ease-out ${particle.delay}s forwards`,
-                    }}
-                  />
-                ))}
-              </div>
-            )}
+            {/* Efecto de fuego con Three.js */}
+            <FlameEffect />
             
             <img
-              src="/assets/colombia 4.0/JUEGO CORTES/LOGO_GEN.png"
+              src="/assets/logo_smart_leg_geniality.png"
               alt="Monedas"
               className="logo_solar"
             />
