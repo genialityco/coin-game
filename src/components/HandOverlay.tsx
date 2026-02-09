@@ -12,21 +12,50 @@ export function HandOverlay() {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const hands = useHandTracking(videoRef);
   const lastGrab = React.useRef<Record<string, number>>({});
+  const lastGrabState = React.useRef<Record<string, boolean>>({}); // Rastrear estado anterior
 
   React.useEffect(() => {
     const game = getActivePhaserGame();
-    if (!game) return;
-  
-    const scene = game.scene.getScene('CoinScene') as any;
-    if (!scene) return;
-  
     const now = Date.now();
     const COOLDOWN = 300;
-  
+
     hands.forEach(hand => {
-      if (!hand.isGrabbing) return;
-      if (hand.depth < DIST_MIN || hand.depth > DIST_MAX) return;
-      if (lastGrab.current[hand.id] && now - lastGrab.current[hand.id] < COOLDOWN) return;
+      const handId = hand.id;
+      const wasGrabbing = lastGrabState.current[handId] || false;
+      const isGrabbing = hand.isGrabbing;
+      
+      // Solo procesar si hay una transición de ABIERTA a CERRADA
+      const justStartedGrabbing = !wasGrabbing && isGrabbing;
+      
+      // Actualizar estado SIEMPRE
+      lastGrabState.current[handId] = isGrabbing;
+      
+      if (!justStartedGrabbing) {
+        return;
+      }
+      
+      // Emitir evento de gesto de agarre SIEMPRE (para el botón de inicio y otros)
+      const event = new CustomEvent('handGrab', {
+        detail: { handId, x: hand.x, y: hand.y }
+      });
+      window.dispatchEvent(event);
+      console.log('🖐️ Evento handGrab emitido');
+
+      // Si no hay juego activo, solo emitir el evento
+      if (!game) return;
+    
+      const scene = game.scene.getScene('CoinScene') as any;
+      if (!scene) return;
+      
+      // Cooldown para no agarrar múltiples globos
+      if (lastGrab.current[handId] && now - lastGrab.current[handId] < COOLDOWN) {
+        return;
+      }
+
+      // Validar profundidad
+      if (hand.depth < DIST_MIN || hand.depth > DIST_MAX) {
+        return;
+      }
   
       const canvas = game.canvas;
       const rect = canvas.getBoundingClientRect();
@@ -45,7 +74,9 @@ export function HandOverlay() {
         ? scene.coins.getChildren()
         : [];
   
-      if (coins.length === 0) return;
+      if (coins.length === 0) {
+        return;
+      }
   
       const hitCoins = scene.input.hitTestPointer(pointer, coins);
   
@@ -53,8 +84,9 @@ export function HandOverlay() {
         const coin = hitCoins[0];
         if (typeof scene.collectCoin === 'function') {
           scene.collectCoin(coin);
+          console.log('💥 Globo capturado');
         }
-        lastGrab.current[hand.id] = now;
+        lastGrab.current[handId] = now;
       }
     });
   }, [hands]);

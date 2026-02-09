@@ -105,7 +105,6 @@ button:focus-visible {
   justify-content: center;
   align-items: center;
   gap: 1.5rem;
-  z-index: 10;
   width: 100vw;
 }
 
@@ -191,7 +190,113 @@ button:focus-visible {
 
 
 
-/* Botón semitransparente “Ver premios” */
+/* Animación de indicador de gesto */
+.gesture-hint {
+  position: absolute;
+  margin-top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+@keyframes gestureSequence {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  15%, 45% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50%, 85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90%, 100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes handOpen {
+  0%, 15%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  45%, 100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes handGrab {
+  0%, 50% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50%, 85% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  90%, 100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes arrowBounce {
+  0%, 15%, 50%, 90%, 100% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  20%, 45% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  55%, 85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gesture-sequence {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  animation: gestureSequence 3s ease-in-out infinite;
+}
+
+.gesture-hand {
+  width: 100px;
+  height: 70px;
+  object-fit: contain;
+}
+
+.gesture-hand.open {
+  animation: handOpen 3s ease-in-out infinite;
+}
+
+.gesture-hand.grab {
+  animation: handGrab 3s ease-in-out infinite;
+}
+
+.gesture-arrow {
+  font-size: 2.5rem;
+  color: #ffffff;
+  animation: arrowBounce 3s ease-in-out infinite;
+}
+
+.gesture-text {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: gestureSequence 3s ease-in-out infinite;
+}
 .premios-button {
   position: fixed;
   top: 2%;

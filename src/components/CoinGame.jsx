@@ -44,6 +44,44 @@ export default function CoinGame() {
     sceneRef.current.touchPoints = touchPoints;
   }, [touchPoints]);
 
+  // Listener para activar el juego con gesto de agarre SOBRE EL BOTÓN
+  useEffect(() => {
+    if (started) return;
+    
+    const handleHandGrab = (event) => {
+      const { x, y } = event.detail;
+      
+      // Obtener dimensiones del botón START
+      const startButton = document.querySelector('.start-button');
+      if (!startButton) return;
+      
+      const rect = startButton.getBoundingClientRect();
+      
+      // Agregar margen para detectar cerca del botón (20% más)
+      const margin = 40;
+      const buttonArea = {
+        left: rect.left - margin,
+        right: rect.right + margin,
+        top: rect.top - margin,
+        bottom: rect.bottom + margin
+      };
+      
+      // Convertir coordenadas de mano (0-1) a píxeles
+      const clientX = (1 - x) * window.innerWidth;
+      const clientY = y * window.innerHeight;
+      
+      // Verificar si el gesto está dentro del área del botón
+      if (clientX >= buttonArea.left && clientX <= buttonArea.right &&
+          clientY >= buttonArea.top && clientY <= buttonArea.bottom) {
+        setStarted(true);
+        setShowPremios(false);
+      }
+    };
+    
+    window.addEventListener('handGrab', handleHandGrab);
+    return () => window.removeEventListener('handGrab', handleHandGrab);
+  }, [started]);
+
   useEffect(() => {
     console.log("CoinScene no ha iniciado");
     if (!started) return;
@@ -206,6 +244,8 @@ export default function CoinGame() {
       }
 
       update() {
+        // La detección de gestos ahora se maneja completamente en HandOverlay.tsx
+        // Solo mantenemos la visualización de debug si es necesario
         const points = sceneRef.current.touchPoints;
         if (!points || !points.length) return;
       
@@ -217,8 +257,7 @@ export default function CoinGame() {
       
         let debugLines = [];
       
-        // AUMENTA ESTE VALOR PARA HACER EL ÁREA DE TOQUE MÁS GRANDE
-        const TOUCH_RADIUS = 160; // píxeles (ajusta según necesites: 60, 80, 100...)
+        const TOUCH_RADIUS = 160;
       
         points.forEach((pt) => {
           if (!pt.is_touching) return;
@@ -229,24 +268,6 @@ export default function CoinGame() {
           this.touchMarkers.push(marker);
       
           debugLines.push(`${pt.id}: (${Math.round(x)}, ${Math.round(y)})`);
-      
-          // Crear un círculo de detección
-          const touchCircle = new Phaser.Geom.Circle(x, y, TOUCH_RADIUS);
-      
-          this.coins.children.iterate((coin) => {
-            if (!coin || !coin.active) return;
-      
-            const coinCenter = coin.getCenter();
-            const distance = Phaser.Math.Distance.BetweenPoints(coinCenter, { x, y });
-      
-            // Ajusta el radio de la moneda (basado en su escala)
-            const coinScale = coin.scaleX;
-            const coinRadius = (coin.displayWidth / 2) * 1.5; // +50% de tolerancia
-      
-            if (distance <= TOUCH_RADIUS + coinRadius) {
-              this.collectCoin(coin);
-            }
-          });
         });
       
         this.touchDebugText.setText(debugLines.join("\n"));
@@ -494,6 +515,24 @@ export default function CoinGame() {
             <button className="start-button" onClick={() => setStarted(true)}>
               EMPEZAR
             </button>
+            
+            {/* Animación de indicador de gesto debajo del botón */}
+            <div className="gesture-hint">
+              <div className="gesture-sequence">
+                <img 
+                  src="/assets/hands/hand_open.png" 
+                  alt="Mano abierta"
+                  className="gesture-hand open"
+                />
+                <span className="gesture-arrow">⬇</span>
+                <img 
+                  src="/assets/hands/hand_grab.png" 
+                  alt="Mano cerrada"
+                  className="gesture-hand grab"
+                />
+              </div>
+              <p className="gesture-text">Cierra la mano para empezar</p>
+            </div>
           </div>
         )}
       </div>
