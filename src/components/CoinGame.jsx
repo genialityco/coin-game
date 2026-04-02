@@ -5,28 +5,29 @@ import ReactDOM from "react-dom";
 import Phaser from "phaser";
 import { useTouchPoints } from "../hooks/useTouchPoints";
 import "../index.css";
-import { TouchDebugOverlay } from "./TouchDebugOverlay";
+//import { TouchDebugOverlay } from "./TouchDebugOverlay";
 import { setActivePhaserGame } from "../utils/phaserInstance";
+import { HandOverlay } from "./HandOverlay";
 
 // import { simulateClickOnCanvas } from "../utils/simulateClick";
 
 const TOTAL_COINS = 30;
-const COIN_SCALE = 0.1;
-const GAME_TIME = 20;
+const COIN_SCALE = 0.8;
+const GAME_TIME = 20; 
 const COIN_TYPES = [
   {
     key: "coin1",
-    asset: "/assets/quinta/MANO_JUEGO.png",
+    asset: "/assets/colombia 4.0/JUEGO CORTES/MONEDAS.png",
     weight: 3,
-    label: "Moneda 1",
+    label: "Moneda",
     points: 20,
   },
 
   {
-    key: "betplay",
-    asset: "/assets/quinta/LOGO_QUINTA_JUEGO.png",
+    key: "buho",
+    asset: "/assets/colombia 4.0/JUEGO CORTES/BUHO.png",
     weight: 1,
-    label: "Logo Betplay",
+    label: "Logo Buho",
     points: 50,
   },
 ];
@@ -48,7 +49,8 @@ export default function CoinGame() {
     if (!started) return;
     console.log("started");
     const container = gameContainer.current;
-    const side = Math.min(container.clientWidth, container.clientHeight);
+    const width = container.clientWidth;
+    const height = container.clientHeight;
 
     class CoinScene extends Phaser.Scene {
       constructor() {
@@ -57,8 +59,8 @@ export default function CoinGame() {
 
       preload() {
         COIN_TYPES.forEach((ct) => this.load.image(ct.key, ct.asset));
-        this.load.image("legales", "/assets/quinta/TEXTOS_LEGALES.png");
-        this.load.image("header", "/assets/quinta/LOGO_QUINTA_SUERIOR.png");
+        //this.load.image("legales", "/assets/quinta/TEXTOS_LEGALES.png");
+        //this.load.image("header", "/assets/colombia 4.0/JUEGO CORTES/LOGO_GEN.png");
         this.load.audio("coinSound", "/assets/coin-sound.mp3"); 
       }
 
@@ -70,18 +72,20 @@ export default function CoinGame() {
         this.coinSound = this.sound.add("coinSound");
 
 
-        this.headerImg = this.add
-          .image(this.scale.width / 2, 50, "header")
-          .setOrigin(0.5, -0.5)
-          .setScale(0.25)
-          .setDepth(4);
+        // this.headerImg = this.add
+        //   .image(this.scale.width / 2, 50, "header")
+        //   .setOrigin(0.5, -0.5)
+        //   .setScale(0.25)
+        //   .setDepth(4);
         this.footerImg = this.add
           .image(this.scale.width / 2, this.scale.height, "legales")
           .setOrigin(0.5, 1)
           .setScale(0.3)
           .setDepth(4);
+        const rightMargin = 100; // Ajusta este valor para más o menos margen
+        
         this.timerText = this.add
-          .text(this.scale.width - 10, 10, `00:${GAME_TIME}`, {
+          .text(this.scale.width - rightMargin, 10, `00:${GAME_TIME}`, {
             fontFamily: "Arial",
             fontSize: "28px",
             fontWeight: "bold",
@@ -91,7 +95,7 @@ export default function CoinGame() {
           .setDepth(3);
 
         const panelWidth = 190,
-          panelX = this.scale.width - panelWidth - 10,
+          panelX = this.scale.width - panelWidth - rightMargin,
           panelY = 120,
           panelHeight = COIN_TYPES.length * 40 + 20;
         const gfx = this.add.graphics().setDepth(1);
@@ -171,37 +175,78 @@ export default function CoinGame() {
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
       }
 
+      // NUEVA FUNCIÓN: Muestra el puntaje flotante
+      showFloatingScore(x, y, points) {
+        const scoreText = this.add
+          .text(x, y, `+${points}`, {
+            fontFamily: "Arial",
+            fontSize: "40px",
+            fontWeight: "bold",
+            color: "#FFD700", // Color dorado
+            stroke: "#000000",
+            strokeThickness: 4,
+          })
+          .setOrigin(0.5)
+          .setDepth(9);
+
+        // Animación: se eleva y desaparece
+        this.tweens.add({
+          targets: scoreText,
+          y: y - 100, // Se eleva 100 píxeles
+          alpha: 0, // Desaparece gradualmente
+          scale: 1.3, // Crece un poco
+          duration: 1200, // Duración de 1.2 segundos
+          ease: "Power2",
+          onComplete: () => {
+            scoreText.destroy(); // Elimina el texto cuando termina
+          },
+        });
+      }
+
       update() {
         const points = sceneRef.current.touchPoints;
         if (!points || !points.length) return;
-
+      
         const w = this.scale.width;
         const h = this.scale.height;
-
+      
         this.touchMarkers.forEach((marker) => marker.destroy());
         this.touchMarkers = [];
-
+      
         let debugLines = [];
-
+      
+        // AUMENTA ESTE VALOR PARA HACER EL ÁREA DE TOQUE MÁS GRANDE
+        const TOUCH_RADIUS = 160; // píxeles (ajusta según necesites: 60, 80, 100...)
+      
         points.forEach((pt) => {
           if (!pt.is_touching) return;
           const x = w - (pt["2d_x_px"] / 640) * w;
           const y = (pt["2d_y_px"] / 480) * h;
-
-          const marker = this.add.circle(x, y, 8, 0xff0000).setDepth(10);
+      
+          const marker = this.add.circle(x, y, TOUCH_RADIUS, 0xff0000, 0.2).setDepth(10);
           this.touchMarkers.push(marker);
-
+      
           debugLines.push(`${pt.id}: (${Math.round(x)}, ${Math.round(y)})`);
-
+      
+          // Crear un círculo de detección
+          const touchCircle = new Phaser.Geom.Circle(x, y, TOUCH_RADIUS);
+      
           this.coins.children.iterate((coin) => {
             if (!coin || !coin.active) return;
-            const bounds = coin.getBounds();
-            if (Phaser.Geom.Rectangle.Contains(bounds, x, y)) {
+      
+            const coinCenter = coin.getCenter();
+            const distance = Phaser.Math.Distance.BetweenPoints(coinCenter, { x, y });
+      
+            // Ajusta el radio de la moneda (basado en su escala)
+            const coinScale = coin.scaleX;
+            const coinRadius = (coin.displayWidth / 2) * 1.5; // +50% de tolerancia
+      
+            if (distance <= TOUCH_RADIUS + coinRadius) {
               this.collectCoin(coin);
             }
           });
         });
-
+      
         this.touchDebugText.setText(debugLines.join("\n"));
       }
 
@@ -213,7 +258,7 @@ export default function CoinGame() {
         const tex = this.textures.get(chosen.key).getSourceImage();
         // const wTx = tex.width * COIN_SCALE;
         const hTx = tex.height * COIN_SCALE;
-        const marginX = this.scale.width * 0.15; // 15% de margen a cada lado (70% total)
+        const marginX = this.scale.width * 0.25; // 15% de margen a cada lado (70% total)
         const x = Phaser.Math.Between(marginX, this.scale.width - marginX);
         const startY = Phaser.Math.Between(-hTx, 0);
         const endY = this.scale.height + hTx;
@@ -240,15 +285,26 @@ export default function CoinGame() {
 
       collectCoin(coin) {
         if (this.timeLeft <= 0 || !coin.active) return;
+        
+        // Guarda la posición de la moneda ANTES de destruirla
+        const coinX = coin.x;
+        const coinY = coin.y;
+        const coinPoints = coin.points;
+        
         // Reproduce el sonido solo si está cargado y no está bloqueado
         if (this.coinSound && this.sound.locked === false) {
           this.coinSound.play();
         }
+        
         this.counts[coin.type]++;
         this.scores[coin.type] += coin.points;
         this.texts[coin.type].setText(
           `${this.counts[coin.type]}  |  ${this.scores[coin.type]}`
         );
+        
+        // MUESTRA EL PUNTAJE FLOTANTE
+        this.showFloatingScore(coinX, coinY, coinPoints);
+        
         coin.destroy();
         const totalWeight = COIN_TYPES.reduce((s, ct) => s + ct.weight, 0);
         this.spawnCoin(totalWeight);
@@ -313,7 +369,12 @@ export default function CoinGame() {
       parent: container,
       transparent: true,
       scene: CoinScene,
-      scale: { width: side, height: side, mode: Phaser.Scale.NONE },
+      scale: { 
+        width: width, 
+        height: height, 
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+      },
     });
     console.log("GAME or", game);
     setActivePhaserGame(game);
@@ -321,8 +382,9 @@ export default function CoinGame() {
     gameRef.current = game;
 
     const onResize = () => {
-      const newSide = Math.min(container.clientWidth, container.clientHeight);
-      game.scale.resize(newSide, newSide);
+      const newWidth = container.clientWidth;
+      const newHeight = container.clientHeight;
+      game.scale.resize(newWidth, newHeight);
     };
     window.addEventListener("resize", onResize);
 
@@ -352,41 +414,13 @@ export default function CoinGame() {
     )
     : null;
 
-  // const handleSimulate = () => {
-  //   const game = gameRef.current;
-  //   if (!game) return;
-  //   // 1) Genera coordenadas donde quieres “tocar”
-  //   const x = Math.random() * game.scale.width;
-  //   const y = Math.random() * game.scale.height;
-
-  //   // 2) Obtén tu escena
-  //   const scene = game.scene.getScene("CoinScene") || game.scene.scenes[0];
-
-  //   // 3) Prepara el puntero
-  //   const pointer = scene.input.activePointer;
-  //   pointer.x = x;
-  //   pointer.y = y;
-
-  //   // 4) Hit-test manual sobre las coins
-  //   const coins = scene.coins.getChildren();
-  //   const hits = scene.input.hitTestPointer(pointer, coins);
-  //   if (hits.length) {
-  //     scene.collectCoin(hits[0]);
-  //     console.log(`Coin recolectada en (${x.toFixed(2)}, ${y.toFixed(2)})`);
-  //   } else {
-  //     console.log(
-  //       `No había ninguna coin en (${x.toFixed(2)}, ${y.toFixed(2)})`
-  //     );
-  //   }
-  // };
-
   return (
     <>
-      <div ref={gameContainer} className="coin-container" key={started}>
+      <div ref={gameContainer} className="coin-container" style={{ padding: '0 20px' }} key={started}>
         {!started && (
           <div className="coin-overlay">
             <img
-              src="/assets/quinta/LOGO_QUINTA_SUERIOR.png"
+              src="/assets/colombia 4.0/JUEGO CORTES/LOGO_GEN.png"
               alt="Monedas"
               className="logo_solar"
             />
@@ -395,15 +429,8 @@ export default function CoinGame() {
             </button>
           </div>
         )}
-        {/* <button className="premios-button" onClick={() => setShowPremios(true)}>
-          Ver premios
-        </button> */}
-        {/* <button className="simulate-button" onClick={handleSimulate}>
-          Simular Clic
-        </button> */}
       </div>
-      {/* {premiosModal} */}
-      <TouchDebugOverlay />
+      <HandOverlay />
     </>
   );
 }

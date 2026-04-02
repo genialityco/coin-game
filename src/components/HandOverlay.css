@@ -1,0 +1,50 @@
+/* HandOverlay.css */
+.camera-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 160px;
+  
+    border-radius: 8px;
+    background: #000;
+    z-index: 1001;
+  }
+  
+  .hand-camera {
+    width: 100%;
+    height: auto;
+    display: block;
+    transform: scaleX(-1);
+  }
+  
+  .camera-status {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
+    color: white;
+    text-align: center;
+    font-size: 11px;
+    padding: 2px;
+  }
+ 
+  
+  .hand-marker {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    
+ 
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .hand-info {
+    color: white;
+    font-size: 11px;
+    text-align: center;
+    
+  }
